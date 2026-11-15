@@ -125,9 +125,9 @@ body.ready .cap,body.ready .go{opacity:1}
 }
 .chap.flip::after{right:auto;left:calc(var(--gutter) - 2vw)}
 .chap.in::after{opacity:1;transform:none}
-.chap .txt{align-self:end;margin-bottom:6vh;max-width:none;transform:translate3d(calc(var(--mx,0)*7px),calc(var(--my,0)*5px),0);grid-column:1;padding-right:clamp(28px,6vw,110px);max-width:36rem;justify-self:end}
-.chap .art{grid-column:2;display:grid;place-items:center}
-.chap.flip .txt{align-self:start;margin-top:6vh;margin-bottom:0;grid-column:2;grid-row:1;padding-right:0;padding-left:clamp(28px,6vw,110px);justify-self:start}
+.chap .txt{grid-row:1;align-self:center;margin-top:5vh;transform:translate3d(calc(var(--mx,0)*7px),calc(var(--my,0)*5px),0);grid-column:1;padding-right:clamp(28px,6vw,110px);max-width:36rem;justify-self:end}
+.chap .art{grid-column:2;grid-row:1;display:grid;place-items:center}
+.chap.flip .txt{align-self:center;margin-top:-5vh;grid-column:2;grid-row:1;padding-right:0;padding-left:clamp(28px,6vw,110px);justify-self:start}
 .chap.flip .art{grid-column:1;grid-row:1}
 .art{transform:translate3d(calc(var(--mx,0)*-22px),calc(var(--my,0)*-14px),0)}
 .art svg{width:clamp(200px,28vw,420px);height:auto;fill:none;stroke:var(--gold);stroke-width:.45;stroke-linecap:round;stroke-linejoin:round;opacity:.5;filter:blur(.4px)}
@@ -138,11 +138,9 @@ body.ready .cap,body.ready .go{opacity:1}
 
 .num{display:none;font-family:var(--serif);font-weight:300;font-size:clamp(44px,5vw,72px);line-height:1;color:var(--gold);opacity:.85}
 .step{font-size:13px;color:var(--mute);margin:.15rem 0 .9rem}
-.chap h2{font-size:clamp(46px,6.6vw,110px);line-height:.95;letter-spacing:-.04em;margin-bottom:1.2rem;white-space:nowrap}
+.chap h2{font-size:clamp(40px,5.4vw,88px);line-height:.95;letter-spacing:-.04em;margin-bottom:1.2rem;white-space:nowrap}
 .chap .step{font-size:13px;color:var(--gold);margin:0 0 .5rem}
-.chap .body{color:var(--soft);max-width:25em;font-size:14px;margin-left:clamp(0px,3vw,44px)}
-.facts{margin-left:clamp(0px,3vw,44px)}
-.price{margin-left:clamp(0px,3vw,44px)}
+.chap .body{color:var(--soft);max-width:25em;font-size:14px}
 .facts{margin:1.4rem 0 1.2rem;border-top:1px solid rgba(241,234,218,.16)}
 .facts div{display:grid;grid-template-columns:7.5em 1fr;gap:1rem;padding:.65rem 0;border-bottom:1px solid rgba(241,234,218,.16);font-size:13.5px;line-height:1.55}
 .facts dt{color:var(--gold);font-weight:400}
@@ -279,8 +277,8 @@ body.ready .hero-note{opacity:1}
 body.ready .hl .sm{opacity:1}
 
 /* grid of cells: hairline borders; frosted cells take turns, each fading in and out slowly */
-.grid{position:fixed;inset:0;z-index:1;pointer-events:none;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(7,1fr);opacity:0;transition:opacity 2.4s ease 1.6s}
-body.ready .grid{opacity:1}
+.grid{position:fixed;inset:0;z-index:1;pointer-events:none;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(7,1fr);opacity:0;transition:opacity 1.2s ease}
+body[data-screen=top].ready .grid{opacity:1;transition:opacity 2.4s ease 1.6s}
 .grid b{position:relative;box-shadow:inset 0 0 0 .5px rgba(241,234,218,.1);transition:box-shadow 2s ease}
 /* blur only exists while a cell is active or fading, so idle cells cost nothing */
 .grid b::before{content:"";position:absolute;inset:0;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(2,3,2,.2);opacity:0;visibility:hidden;transition:opacity 2.8s ease,visibility 0s linear 2.8s}

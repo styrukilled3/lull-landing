@@ -97,6 +97,7 @@ function show(i, { push = true } = {}) {
     s.setAttribute('aria-hidden', String(k !== i));
   });
   const el = screens[i];
+  body.dataset.screen = el.dataset.id;
   el.scrollTop = 0;
   clearTimeout(leaveTimers.get(el));
   mark(el, true);
@@ -229,7 +230,7 @@ if (gridEl) {
   add(); add(); add();
   if (!reduced) {
     setInterval(() => {
-      if (document.hidden) return;
+      if (document.hidden || body.dataset.screen !== 'top') return;
       drop();
       add();
     }, 2200);
