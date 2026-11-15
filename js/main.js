@@ -30,15 +30,17 @@ sound.addEventListener('click', () => {
   sound.setAttribute('aria-pressed', String(on));
 });
 
-try {
-  start();
-} catch (err) {
+start().catch((err) => {
   console.error('lull: WebGL scene failed, falling back to static background', err);
   document.body.classList.add('no-gl');
   loader.classList.add('gone');
+});
+
+function loadTexture(url) {
+  return new Promise((resolve, reject) => new THREE.TextureLoader().load(url, resolve, undefined, reject));
 }
 
-function start() {
+async function start() {
   /* ---------- terrain + path ---------- */
   const L = 600;
   const hash2 = (x, y) => {
@@ -51,6 +53,10 @@ function start() {
     const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
     const a = hash2(xi, yi), b = hash2(xi + 1, yi), c = hash2(xi, yi + 1), d = hash2(xi + 1, yi + 1);
     return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+  };
+  const sm = (a, b, v) => {
+    const t = Math.min(1, Math.max(0, (v - a) / (b - a)));
+    return t * t * (3 - 2 * t);
   };
   const pathX = (z) => Math.sin(-z * 0.011) * 30 + Math.sin(-z * 0.027) * 8;
   const ground = (x, z) => {
@@ -67,7 +73,7 @@ function start() {
   const curve = new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0.5);
 
   /* ---------- renderer ---------- */
-  const NIGHT = new THREE.Color('#12351E').multiplyScalar(0.5);
+  const NIGHT = new THREE.Color('#12351E').multiplyScalar(0.22);
   const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
   const PR = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 1.75);
   renderer.setPixelRatio(PR);
@@ -79,52 +85,21 @@ function start() {
   const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 420);
   const FOV_TAN = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
 
-  /* ---------- sprite atlas (flower | leaf), drawn procedurally ---------- */
-  const atlas = document.createElement('canvas');
-  atlas.width = 256;
-  atlas.height = 128;
-  const g = atlas.getContext('2d');
-  g.save();
-  g.translate(64, 64);
-  let gr = g.createRadialGradient(0, 0, 0, 0, 0, 62);
-  gr.addColorStop(0, 'rgba(255,255,255,1)');
-  gr.addColorStop(0.18, 'rgba(255,255,255,0.85)');
-  gr.addColorStop(0.5, 'rgba(255,255,255,0.18)');
-  gr.addColorStop(1, 'rgba(255,255,255,0)');
-  g.fillStyle = gr;
-  g.fillRect(-64, -64, 128, 128);
-  for (let i = 0; i < 6; i++) {
-    g.rotate(Math.PI / 3);
-    const pg = g.createRadialGradient(0, -22, 0, 0, -22, 22);
-    pg.addColorStop(0, 'rgba(255,255,255,0.9)');
-    pg.addColorStop(1, 'rgba(255,255,255,0)');
-    g.fillStyle = pg;
-    g.beginPath();
-    g.ellipse(0, -22, 9, 22, 0, 0, Math.PI * 2);
-    g.fill();
-  }
-  g.restore();
-  g.save();
-  g.translate(192, 64);
-  g.scale(0.4, 1);
-  gr = g.createRadialGradient(0, 0, 0, 0, 0, 56);
-  gr.addColorStop(0, 'rgba(255,255,255,0.95)');
-  gr.addColorStop(0.5, 'rgba(255,255,255,0.35)');
-  gr.addColorStop(1, 'rgba(255,255,255,0)');
-  g.fillStyle = gr;
-  g.fillRect(-64, -64, 128, 128);
-  g.restore();
-  const atlasTex = new THREE.CanvasTexture(atlas);
-  atlasTex.minFilter = THREE.LinearFilter;
-  atlasTex.generateMipmaps = false;
+  /* ---------- sprite atlas: 4 cols x 3 rows, cells 0-7 flowers, 8-11 leaves ---------- */
+  const atlasTex = await loadTexture('assets/sprites.png');
+  atlasTex.colorSpace = THREE.SRGBColorSpace;
+  atlasTex.generateMipmaps = true;
+  atlasTex.minFilter = THREE.LinearMipmapLinearFilter;
+  atlasTex.magFilter = THREE.LinearFilter;
+  atlasTex.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
 
   /* ---------- flowers + leaves ---------- */
   const cGold = new THREE.Color('#CBA052');
   const cWood = new THREE.Color('#8B6425');
   const cWhite = new THREE.Color('#FFFFFF');
-  const cLeafA = new THREE.Color('#12351E').lerp(cWhite, 0.2);
-  const cLeafB = new THREE.Color('#2b6a3f');
   const tmp = new THREE.Color();
+  // cells that face the camera and look fine at any angle; the rest stay roughly upright
+  const ROUND_CELLS = new Set([1, 2, 4, 5, 7]);
 
   function buildPoints(n, isLeaf) {
     const pos = new Float32Array(n * 3);
@@ -132,36 +107,62 @@ function start() {
     const type = new Float32Array(n);
     const col = new Float32Array(n * 3);
     const size = new Float32Array(n);
-    for (let i = 0; i < n; i++) {
+    const cell = new Float32Array(n);
+    const rot = new Float32Array(n);
+    const bright = new Float32Array(n);
+    let i = 0;
+    let tries = 0;
+    while (i < n && tries < n * 40) {
+      tries++;
       const z = -Math.random() * L;
       const spread = (Math.random() + Math.random() + Math.random() - 1.5) * 2;
       const x = pathX(z) + spread * 16;
-      const y = ground(x, z) + (isLeaf ? Math.random() * 0.5 : 0.2 + Math.random() * 1.9);
+      // patches of growth with bare ground between them
+      const d = vnoise(x * 0.07 + 3.1, z * 0.07);
+      const keep = isLeaf ? 0.3 + 0.7 * sm(0.25, 0.6, d) : sm(0.42, 0.62, d);
+      if (Math.random() > keep) continue;
+
+      const y = ground(x, z) + (isLeaf ? Math.random() * 0.4 : 0.1 + Math.random() * 0.7);
       pos.set([x, y, z], i * 3);
       seed[i] = Math.random();
       type[i] = isLeaf ? 1 : 0;
+      bright[i] = 0.72 + Math.random() * 0.5;
+
+      let c;
       if (isLeaf) {
-        tmp.copy(cLeafA).lerp(cLeafB, Math.random());
-        size[i] = 0.9 + Math.random() * 1.2;
+        c = 8 + Math.floor(Math.random() * 4);
+        size[i] = 0.9 + Math.random() * 0.9;
+        tmp.copy(cWhite);
       } else {
+        // species come in patches: pick by a jittered coarse grid cell, with a few strays
+        const jx = x + vnoise(x * 0.1, z * 0.1) * 12;
+        const jz = z + vnoise(x * 0.1 + 9, z * 0.1) * 12;
+        const base = Math.floor(hash2(Math.floor(jx / 15), Math.floor(jz / 15)) * 8);
+        c = Math.random() < 0.78 ? base : Math.floor(Math.random() * 8);
+        size[i] = 0.36 + Math.random() * 0.5;
         const r = Math.random();
-        if (r < 0.62) tmp.copy(cGold);
-        else if (r < 0.84) tmp.copy(cGold).lerp(cWhite, 0.55);
-        else tmp.copy(cWood).lerp(cGold, 0.3);
-        size[i] = 0.3 + Math.random() * 0.45;
+        if (r < 0.65) tmp.copy(cGold);
+        else if (r < 0.88) tmp.copy(cGold).lerp(cWhite, 0.5);
+        else tmp.copy(cWood).lerp(cGold, 0.4);
       }
+      cell[i] = c;
+      rot[i] = ROUND_CELLS.has(c) || isLeaf ? Math.random() * Math.PI * 2 : (Math.random() - 0.5) * 1.0;
       col.set([tmp.r, tmp.g, tmp.b], i * 3);
+      i++;
     }
     const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    geo.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
-    geo.setAttribute('aType', new THREE.BufferAttribute(type, 1));
-    geo.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
-    geo.setAttribute('aSize', new THREE.BufferAttribute(size, 1));
+    geo.setAttribute('position', new THREE.BufferAttribute(pos.subarray(0, i * 3), 3));
+    geo.setAttribute('aSeed', new THREE.BufferAttribute(seed.subarray(0, i), 1));
+    geo.setAttribute('aType', new THREE.BufferAttribute(type.subarray(0, i), 1));
+    geo.setAttribute('aColor', new THREE.BufferAttribute(col.subarray(0, i * 3), 3));
+    geo.setAttribute('aSize', new THREE.BufferAttribute(size.subarray(0, i), 1));
+    geo.setAttribute('aCell', new THREE.BufferAttribute(cell.subarray(0, i), 1));
+    geo.setAttribute('aRot', new THREE.BufferAttribute(rot.subarray(0, i), 1));
+    geo.setAttribute('aBright', new THREE.BufferAttribute(bright.subarray(0, i), 1));
     return geo;
   }
 
-  const uniforms = {
+  const shared = {
     uTime: { value: 0 },
     uScale: { value: 1 },
     uAspect: { value: innerWidth / innerHeight },
@@ -169,28 +170,32 @@ function start() {
     uReveal: { value: 0 },
     uSway: { value: reduced ? 0 : 1 },
     uMouse: { value: new THREE.Vector2(5, 5) },
-    uMap: { value: atlasTex },
   };
 
   const vert = /* glsl */`
-    uniform float uTime, uScale, uAspect, uDisperse, uReveal, uSway;
+    uniform float uTime, uScale, uAspect, uDisperse, uReveal, uSway, uSizeMul, uMax, uHalo;
     uniform vec2 uMouse;
-    attribute float aSeed, aType, aSize;
+    attribute float aSeed, aType, aSize, aCell, aRot, aBright;
     attribute vec3 aColor;
     varying vec3 vColor;
-    varying float vAlpha, vType, vGlow, vRot;
+    varying float vAlpha, vGlow, vRot, vCell, vFog, vBright;
     void main() {
       vec3 p = position;
       float s = aSeed * 6.2831;
       float sway = (1.0 - uDisperse) * uSway;
-      p.x += sin(uTime * 0.6 + s * 3.0 + p.z * 0.08) * 0.18 * sway;
-      p.y += sin(uTime * 0.5 + s * 2.0) * 0.08 * sway;
+      p.x += sin(uTime * 0.6 + s * 3.0 + p.z * 0.08) * 0.14 * sway;
+      p.y += sin(uTime * 0.5 + s * 2.0) * 0.05 * sway;
       vec3 dir = normalize(vec3(sin(s * 7.0), abs(cos(s * 5.0)) * 0.9 + 0.25, cos(s * 3.0)));
       p += dir * uDisperse * (3.0 + aSeed * 9.0);
       p += vec3(sin(uTime * 0.45 + s * 5.0), cos(uTime * 0.38 + s * 4.0), sin(uTime * 0.3 + s * 3.0)) * uDisperse * 1.3;
 
       vec4 mv = modelViewMatrix * vec4(p, 1.0);
       float dist = -mv.z;
+      if (dist < 0.8) {
+        gl_Position = vec4(3.0, 3.0, 3.0, 1.0);
+        gl_PointSize = 0.0;
+        return;
+      }
       vec4 clip = projectionMatrix * mv;
       vec2 ndc = clip.xy / clip.w;
 
@@ -205,48 +210,84 @@ function start() {
       gl_Position = clip;
 
       bool leaf = aType > 0.5;
-      float grow = leaf ? smoothstep(260.0, 70.0, dist) : smoothstep(95.0, 16.0, dist);
-      float sz = aSize * (leaf ? (0.35 + 0.65 * grow) : (0.18 + 0.82 * grow));
-      sz *= mix(1.0, 0.55, uDisperse);
-      gl_PointSize = clamp(sz * uScale / max(dist, 0.1), 0.0, leaf ? 56.0 : 72.0);
+      float grow = leaf ? smoothstep(240.0, 60.0, dist) : smoothstep(90.0, 14.0, dist);
+      float sz = aSize * (leaf ? (0.4 + 0.6 * grow) : (0.15 + 0.85 * grow)) * uSizeMul;
+      sz *= mix(1.0, 0.5, uDisperse);
+      gl_PointSize = clamp(sz * uScale / dist, 0.0, uMax);
 
-      float nearFade = smoothstep(0.6, 3.0, dist);
-      float farFade = leaf
-        ? 0.5 * (1.0 - smoothstep(120.0, 280.0, dist))
-        : 0.8 * (1.0 - smoothstep(40.0, 170.0, dist)) * (0.25 + 0.75 * grow);
-      vAlpha = nearFade * farFade * uReveal * (1.0 + uDisperse * 0.5);
+      vFog = max(smoothstep(30.0, leaf ? 240.0 : 190.0, dist), 1.0 - uReveal);
+      vAlpha = uHalo > 0.5 ? uReveal * (1.0 - vFog) * (0.25 + 0.75 * grow) * 0.45 * (1.0 + uDisperse * 0.8) : 1.0;
       vColor = aColor;
-      vType = aType;
-      vRot = s;
+      vBright = aBright;
+      vCell = aCell;
+      vRot = aRot + (leaf ? 0.0 : sin(uTime * 0.4 + s * 2.0) * 0.08 * sway);
     }
   `;
-  const frag = /* glsl */`
-    uniform sampler2D uMap;
+
+  const fragSprite = /* glsl */`
+    uniform sampler2D uAtlas;
+    uniform vec3 uFogColor;
     varying vec3 vColor;
-    varying float vAlpha, vType, vGlow, vRot;
+    varying float vAlpha, vGlow, vRot, vCell, vFog, vBright;
     void main() {
       vec2 pc = gl_PointCoord - 0.5;
       float c = cos(vRot), sn = sin(vRot);
-      pc = vec2(c * pc.x - sn * pc.y, sn * pc.x + c * pc.y) + 0.5;
-      pc = clamp(pc, 0.001, 0.999);
-      vec2 uv = vec2(pc.x * 0.5 + (vType > 0.5 ? 0.5 : 0.0), 1.0 - pc.y);
-      float a = texture2D(uMap, uv).a;
-      vec3 col = vColor * (1.0 + vGlow * 2.2);
-      float alpha = a * vAlpha * (1.0 + vGlow * 0.8);
-      if (alpha < 0.003) discard;
-      gl_FragColor = vec4(col, alpha);
+      pc = vec2(c * pc.x - sn * pc.y, sn * pc.x + c * pc.y) * 1.3 + 0.5;
+      if (pc.x < 0.0 || pc.x > 1.0 || pc.y < 0.0 || pc.y > 1.0) discard;
+      float col = mod(vCell, 4.0);
+      float row = floor(vCell / 4.0);
+      vec2 uv = vec2((col + pc.x) * 0.25, 1.0 - (row + pc.y) / 3.0);
+      vec4 t = texture2D(uAtlas, uv);
+      if (t.a < 0.45) discard;
+      vec3 rgb = t.rgb * vBright * (1.0 + vGlow * 1.6);
+      rgb = mix(rgb, uFogColor, vFog);
+      gl_FragColor = vec4(rgb, 1.0);
     }
   `;
-  const matBase = { uniforms, vertexShader: vert, fragmentShader: frag, transparent: true, depthWrite: false, depthTest: false };
-  // flowers add light, leaves are painted over the sky so they cannot pile up into white
-  const matFlower = new THREE.ShaderMaterial({ ...matBase, blending: THREE.AdditiveBlending });
-  const matLeaf = new THREE.ShaderMaterial({ ...matBase, blending: THREE.NormalBlending });
 
-  const flowers = new THREE.Points(buildPoints(isMobile ? 5500 : 11000, false), matFlower);
-  const leaves = new THREE.Points(buildPoints(isMobile ? 4500 : 9000, true), matLeaf);
-  flowers.frustumCulled = false;
-  leaves.frustumCulled = false;
-  scene.add(leaves, flowers);
+  const fragHalo = /* glsl */`
+    varying vec3 vColor;
+    varying float vAlpha, vGlow;
+    void main() {
+      float d = length(gl_PointCoord - 0.5) * 2.0;
+      float a = pow(max(1.0 - d, 0.0), 2.0) * vAlpha * (1.0 + vGlow * 0.8);
+      if (a < 0.003) discard;
+      gl_FragColor = vec4(vColor * (1.0 + vGlow * 2.0), a);
+    }
+  `;
+
+  const spriteMat = new THREE.ShaderMaterial({
+    uniforms: {
+      ...shared,
+      uSizeMul: { value: 1.3 },
+      uMax: { value: 150 },
+      uHalo: { value: 0 },
+      uAtlas: { value: atlasTex },
+      uFogColor: { value: NIGHT.clone() },
+    },
+    vertexShader: vert,
+    fragmentShader: fragSprite,
+    transparent: false,
+    depthTest: true,
+    depthWrite: true,
+  });
+  const haloMat = new THREE.ShaderMaterial({
+    uniforms: { ...shared, uSizeMul: { value: 2.6 }, uMax: { value: 130 }, uHalo: { value: 1 } },
+    vertexShader: vert,
+    fragmentShader: fragHalo,
+    transparent: true,
+    depthTest: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  });
+
+  const flowerGeo = buildPoints(isMobile ? 5500 : 9000, false);
+  const leafGeo = buildPoints(isMobile ? 4500 : 9000, true);
+  const spriteFlowers = new THREE.Points(flowerGeo, spriteMat);
+  const spriteLeaves = new THREE.Points(leafGeo, spriteMat);
+  const halo = new THREE.Points(flowerGeo, haloMat);
+  [spriteFlowers, spriteLeaves, halo].forEach((o) => { o.frustumCulled = false; });
+  scene.add(spriteLeaves, spriteFlowers, halo);
 
   /* ---------- dust ---------- */
   const glow = document.createElement('canvas');
@@ -269,7 +310,7 @@ function start() {
   const dgeo = new THREE.BufferGeometry();
   dgeo.setAttribute('position', new THREE.BufferAttribute(dpos, 3));
   const dust = new THREE.Points(dgeo, new THREE.PointsMaterial({
-    size: 0.22, map: glowTex, color: cGold, transparent: true, opacity: 0.55,
+    size: 0.2, map: glowTex, color: cGold, transparent: true, opacity: 0.5,
     blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
   }));
   dust.frustumCulled = false;
@@ -289,30 +330,43 @@ function start() {
   mg.fillRect(0, 0, 256, 256);
   const moon = new THREE.Sprite(new THREE.SpriteMaterial({
     map: new THREE.CanvasTexture(mc), blending: THREE.AdditiveBlending,
-    depthWrite: false, depthTest: false, transparent: true, fog: false,
+    depthWrite: false, depthTest: true, transparent: true, fog: false, opacity: 0.75,
   }));
-  moon.material.opacity = 0.75;
   moon.scale.set(80, 80, 1);
-  moon.renderOrder = -1;
   scene.add(moon);
 
-  /* ---------- post ---------- */
+  /* ---------- post: bloom, tilt-shift blur, split-RGB grain, vignette ---------- */
   const FxShader = {
-    uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uVig: { value: 0 }, uSplit: { value: 0.0015 } },
+    uniforms: {
+      tDiffuse: { value: null }, uTime: { value: 0 }, uVig: { value: 0 },
+      uSplit: { value: 0.0015 }, uAspect: { value: 1 }, uTilt: { value: 0.014 },
+    },
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
     fragmentShader: /* glsl */`
       uniform sampler2D tDiffuse;
-      uniform float uTime, uVig, uSplit;
+      uniform float uTime, uVig, uSplit, uAspect, uTilt;
       varying vec2 vUv;
       float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
       void main() {
         vec2 o = (vUv - 0.5) * uSplit;
-        vec4 c = vec4(texture2D(tDiffuse, vUv + o).r, texture2D(tDiffuse, vUv).g, texture2D(tDiffuse, vUv - o).b, 1.0);
-        c.rgb += (h(vUv * vec2(1920.0, 1080.0) + fract(uTime) * 50.0) - 0.5) * 0.035;
+        vec3 c = vec3(texture2D(tDiffuse, vUv + o).r, texture2D(tDiffuse, vUv).g, texture2D(tDiffuse, vUv - o).b);
+        float k = smoothstep(0.2, 0.5, abs(vUv.y - 0.5)) * uTilt;
+        if (k > 0.0004) {
+          vec3 acc = vec3(0.0);
+          for (int i = 0; i < 12; i++) {
+            float a = float(i) * 2.39996;
+            float r = sqrt((float(i) + 0.5) / 12.0);
+            vec2 off = vec2(cos(a), sin(a)) * r * k;
+            off.x /= uAspect;
+            acc += texture2D(tDiffuse, vUv + off).rgb;
+          }
+          c = mix(c, acc / 12.0, smoothstep(0.0, 0.004, k));
+        }
+        c += (h(vUv * vec2(1920.0, 1080.0) + fract(uTime) * 50.0) - 0.5) * 0.03;
         float d = distance(vUv, vec2(0.5));
-        float v = 1.0 - smoothstep(0.28 - uVig * 0.1, 0.95, d);
-        c.rgb *= mix(0.35, 1.0, v);
-        gl_FragColor = c;
+        float v = 1.0 - smoothstep(0.3 - uVig * 0.1, 0.98, d);
+        c *= mix(0.3, 1.0, v);
+        gl_FragColor = vec4(c, 1.0);
       }
     `,
   };
@@ -320,7 +374,7 @@ function start() {
   composer.setPixelRatio(PR);
   composer.setSize(innerWidth, innerHeight);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), isMobile ? 0.45 : 0.55, 0.5, 0.4);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), isMobile ? 0.4 : 0.5, 0.6, 0.55);
   composer.addPass(bloom);
   const fx = new ShaderPass(FxShader);
   composer.addPass(fx);
@@ -330,6 +384,7 @@ function start() {
   const mouse = new THREE.Vector2(5, 5);
   const mouseS = new THREE.Vector2(5, 5);
   const tilt = new THREE.Vector2(0, 0);
+  const zero = new THREE.Vector2(0, 0);
   if (!reduced) {
     addEventListener('pointermove', (e) => {
       mouse.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
@@ -349,8 +404,9 @@ function start() {
     composer.setSize(innerWidth, innerHeight);
     camera.aspect = innerWidth / innerHeight;
     camera.updateProjectionMatrix();
-    uniforms.uAspect.value = camera.aspect;
-    uniforms.uScale.value = (innerHeight * PR) / (2 * FOV_TAN);
+    shared.uAspect.value = camera.aspect;
+    shared.uScale.value = (innerHeight * PR) / (2 * FOV_TAN);
+    fx.uniforms.uAspect.value = camera.aspect;
   }
   addEventListener('resize', onResize);
   onResize();
@@ -376,7 +432,7 @@ function start() {
     const disperse = hoverMix * hoverMix * (3 - 2 * hoverMix);
 
     mouseS.lerp(mouse, Math.min(1, dt * 8));
-    uniforms.uMouse.value.copy(mouseS);
+    shared.uMouse.value.copy(mouseS);
 
     const target = scrollProgress() * 0.94;
     const prev = tCur;
@@ -391,7 +447,7 @@ function start() {
     look.y -= 2.6;
     camera.lookAt(look);
     const off = reduced || mouse.x > 2;
-    tilt.lerp(off ? new THREE.Vector2(0, 0) : mouse, Math.min(1, dt * 3));
+    tilt.lerp(off ? zero : mouse, Math.min(1, dt * 3));
     camera.rotateY(-tilt.x * 0.06);
     camera.rotateX(tilt.y * 0.04);
 
@@ -399,9 +455,9 @@ function start() {
     moon.position.copy(camera.position).addScaledVector(fwd, 340);
     moon.position.y += 90;
 
-    uniforms.uTime.value = time;
-    uniforms.uDisperse.value = disperse;
-    uniforms.uReveal.value = Math.min(1, time / 2.5);
+    shared.uTime.value = time;
+    shared.uDisperse.value = disperse;
+    shared.uReveal.value = Math.min(1, time / 2.5);
     fx.uniforms.uTime.value = time;
     fx.uniforms.uVig.value = Math.min(1, speedSm * 6) + disperse * 0.4;
 
