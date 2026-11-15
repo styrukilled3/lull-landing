@@ -8,10 +8,15 @@
 <meta name="theme-color" content="#050604">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=19">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=20">
 </head>
 <body>
+<div class="grid" aria-hidden="true">
+  <i style="left:25%;top:33.33%"></i><i style="left:75%;top:33.33%"></i>
+  <i style="left:50%;top:66.66%"></i><i style="left:25%;top:66.66%"></i><i style="left:75%;top:66.66%"></i>
+</div>
+
 <div class="bg" id="bg" aria-hidden="true">
   <video id="bgv" class="bgv" muted playsinline loop autoplay preload="auto" poster="assets/video/poster.jpg">
     <source src="assets/video/hero.mp4" type="video/mp4">
@@ -32,21 +37,18 @@
 <main id="top">
   <section class="hero screen" data-id="top" data-blur="0" data-dim="0">
     <h1>
-      <span class="hl l1" style="--d:.35s"><span>Off the world,</span></span>
-      <span class="hl l2" style="--d:1.2s"><span>on yourself.</span></span>
+      <span class="hl l1" style="--d:.35s"><span>Off the world,<i class="sm sm-t">Tạm gác thế giới ngoài kia</i></span></span>
+      <span class="hl l2" style="--d:1.2s"><span><i class="sm sm-b">Quay về chăm sóc chính mình</i>on yourself.</span></span>
     </h1>
-    <div class="hero-row">
-      <p class="cap cap-l">Tạm gác thế giới ngoài kia.</p>
-      <a class="go" href="#about" id="go" aria-label="Khám phá lull">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
-      </a>
-      <p class="cap cap-r">Quay về chăm sóc chính mình.</p>
-    </div>
+    <a class="go" href="#about" id="go" aria-label="Khám phá lull">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
+    </a>
+    <p class="hero-note">Nghi thức 3 bước chăm sóc giấc ngủ</p>
   </section>
 
   <section class="about screen" id="about" data-id="about" data-blur="9" data-dim=".3">
     <div class="about-in">
-      <h2 class="ab-title" style="--i:0">Về chúng tôi</h2>
+      <h2 class="ab-title" style="--i:0">lull<i class="sm">Về chúng tôi</i></h2>
       <p class="ab-name" style="--i:1">lull lấy cảm hứng từ lullaby, bài hát ru, và trạng thái lắng dịu, chậm lại sau những bộn bề.</p>
       <div class="ab-pair">
         <div class="ab-item ab-v" style="--i:2">
@@ -83,7 +85,7 @@
       <div class="txt">
         <p class="num" style="--i:0">01</p>
         <p class="step" style="--i:1">Mind Off</p>
-        <h2 style="--i:2">Túi thơm thảo mộc</h2>
+        <h2 style="--i:2">Túi thơm<i class="sm">thảo mộc</i></h2>
         <p class="body" style="--i:3">Điểm khởi động. Hương thơm là tín hiệu báo rằng công việc đã khép lại và giờ nghỉ ngơi bắt đầu.</p>
         <dl class="facts" style="--i:4">
           <div><dt>Thành phần</dt><dd>Vỏ sen 40%, trần bì 35%, hoa cúc 25%</dd></div>
@@ -106,7 +108,7 @@
       <div class="txt">
         <p class="num" style="--i:0">02</p>
         <p class="step" style="--i:1">Eyes Off</p>
-        <h2 style="--i:2">Kem dưỡng mắt</h2>
+        <h2 style="--i:2"><i class="sm sm-b">Kem</i>dưỡng mắt</h2>
         <p class="body" style="--i:3">Chăm sóc vùng da quanh mắt sau một ngày dài trước màn hình. Tạm ngừng nhìn ra bên ngoài để quay về với bản thân.</p>
         <dl class="facts" style="--i:4">
           <div><dt>Thành phần</dt><dd>Panthenol, rau má, trà xanh, hoa cúc, Sodium Hyaluronate</dd></div>
@@ -128,7 +130,7 @@
       <div class="txt">
         <p class="num" style="--i:0">03</p>
         <p class="step" style="--i:1">Slow Off</p>
-        <h2 style="--i:2">Thanh lăn mát xa mặt</h2>
+        <h2 style="--i:2">Thanh lăn<i class="sm">mát xa mặt</i></h2>
         <p class="body" style="--i:3">Khép lại nghi thức. Massage nhẹ giúp giải tỏa căng cơ mặt và đưa cơ thể vào trạng thái ngủ sâu.</p>
         <dl class="facts" style="--i:4">
           <div><dt>Chất liệu</dt><dd>Đầu lăn inox 304, thân nhựa kháng khuẩn ABS</dd></div>
@@ -142,7 +144,7 @@
 
   <section class="set screen" id="set" data-id="set" data-blur="10" data-dim=".34">
     <div class="set-in">
-      <h2 class="set-title">lull Ritual Set</h2>
+      <h2 class="set-title">lull <i class="sm sm-b">Ritual</i>Set</h2>
       <p class="body">Mind Off, Eyes Off và Slow Off trong một bộ, kèm mã QR nghe playlist 432 Hz và bài tập thở.</p>
       <p class="deal">
         <span class="was">327.000đ</span>
@@ -178,6 +180,6 @@
 
 <div class="loader" id="loader"><span></span></div>
 
-<script type="module" src="js/main.js?v=19"></script>
+<script type="module" src="js/main.js?v=20"></script>
 </body>
 </html>
