@@ -279,12 +279,12 @@ body.ready .hero-note{opacity:1}
 body.ready .hl .sm{opacity:1}
 
 /* grid of cells: hairline borders; frosted cells take turns, each fading in and out slowly */
-.grid{position:fixed;inset:0;z-index:1;pointer-events:none;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(4,1fr);opacity:0;transition:opacity 2.4s ease 1.6s}
+.grid{position:fixed;inset:0;z-index:1;pointer-events:none;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(7,1fr);opacity:0;transition:opacity 2.4s ease 1.6s}
 body.ready .grid{opacity:1}
-.grid b{position:relative;box-shadow:inset 0 0 0 .5px rgba(241,234,218,.14)}
-.grid b::before{content:"";position:absolute;inset:0;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(2,3,2,.2);opacity:0;transition:opacity 2.8s ease}
-.grid b.f::before{opacity:1}
-.grid b.h::before{opacity:1;transition-duration:.45s;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
-.grid b{transition:box-shadow 2s ease}
-.grid b.h{box-shadow:inset 0 0 0 .5px rgba(203,160,82,.5);transition-duration:.4s}
-.grid i{position:absolute;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:#fff;box-shadow:0 0 8px 2px rgba(203,160,82,.7);opacity:.85}
+.grid b{position:relative;box-shadow:inset 0 0 0 .5px rgba(241,234,218,.1);transition:box-shadow 2s ease}
+/* blur only exists while a cell is active or fading, so idle cells cost nothing */
+.grid b::before{content:"";position:absolute;inset:0;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(2,3,2,.2);opacity:0;visibility:hidden;transition:opacity 2.8s ease,visibility 0s linear 2.8s}
+.grid b.f::before{opacity:1;visibility:visible;transition:opacity 2.8s ease,visibility 0s}
+.grid b.h::before{opacity:1;visibility:visible;background:rgba(255,246,225,.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transition:opacity .45s ease,visibility 0s}
+.grid b.h{box-shadow:inset 0 0 0 .5px rgba(203,160,82,.55);transition-duration:.4s}
+.grid i{position:absolute;width:3px;height:3px;margin:-1.5px 0 0 -1.5px;border-radius:50%;background:#fff;box-shadow:0 0 7px 1px rgba(203,160,82,.7);opacity:.8}
