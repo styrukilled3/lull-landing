@@ -3,23 +3,16 @@ import * as audio from './audio.js';
 const body = document.body;
 const video = document.getElementById('bgv');
 const bg = document.getElementById('bg');
-const shade = document.getElementById('shade');
 const hero = document.querySelector('.hero');
 const loader = document.getElementById('loader');
 const go = document.getElementById('go');
 const sound = document.getElementById('sound');
+const topBar = document.getElementById('top-bar');
+const scrub = document.getElementById('scrub');
+const ritual = document.getElementById('ritual');
+const thread = document.getElementById('thread');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-/* section reveal */
-const io = new IntersectionObserver((entries) => {
-  entries.forEach((e) => {
-    if (e.isIntersecting) {
-      e.target.classList.add('in');
-      io.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.2 });
-document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
 /* sound */
 sound.addEventListener('click', () => {
@@ -48,15 +41,82 @@ if (reduced) {
   if (p && p.catch) p.catch(() => {});
 }
 
-/* scroll: video darkens and hero fades, so the Ritual sections read cleanly */
-let dim = 0;
-const onScroll = () => {
-  const t = Math.min(1, Math.max(0, scrollY / (innerHeight * 0.9)));
-  dim = t;
+/* story: split into words so each can light up with scroll */
+const words = [];
+if (scrub) {
+  const text = scrub.textContent.trim();
+  scrub.textContent = '';
+  text.split(/(\s+)/).forEach((tok) => {
+    if (/^\s+$/.test(tok)) {
+      scrub.appendChild(document.createTextNode(' '));
+      return;
+    }
+    const s = document.createElement('span');
+    s.className = 'w';
+    s.textContent = tok;
+    scrub.appendChild(s);
+    words.push(s);
+  });
+}
+
+/* one-shot reveals: chapters and the set section, with price count-up */
+const fmt = (n) => n.toLocaleString('vi-VN');
+function countUp(el) {
+  const to = Number(el.dataset.to);
+  if (!to || reduced) { el.textContent = fmt(to || 0); return; }
+  const t0 = performance.now();
+  const dur = 1600;
+  const tick = (now) => {
+    const k = clamp((now - t0) / dur);
+    el.textContent = fmt(Math.round(to * (1 - Math.pow(1 - k, 3))));
+    if (k < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    e.target.querySelectorAll('.count').forEach(countUp);
+    io.unobserve(e.target);
+  });
+}, { threshold: 0.35 });
+document.querySelectorAll('.chap, .set').forEach((el) => io.observe(el));
+
+/* scroll-driven: video dim, hero fade, word light, thread growth, header hide */
+let lastY = scrollY;
+function onScroll() {
+  const vh = innerHeight;
+  const y = scrollY;
+
+  const t = clamp(y / (vh * 0.9));
   bg.style.setProperty('--dim', (t * 0.82).toFixed(3));
   hero.style.opacity = String(Math.max(0, 1 - t * 1.5));
-};
+
+  if (words.length && !reduced) {
+    const r = scrub.getBoundingClientRect();
+    const p = clamp((vh * 0.78 - r.top) / (r.height + vh * 0.28));
+    const lit = p * (words.length + 6);
+    words.forEach((w, i) => {
+      w.style.opacity = (0.16 + 0.84 * clamp(lit - i)).toFixed(2);
+    });
+  } else if (words.length) {
+    words.forEach((w) => { w.style.opacity = '1'; });
+  }
+
+  if (thread) {
+    const r = ritual.getBoundingClientRect();
+    thread.style.setProperty('--p', clamp((vh * 0.6 - r.top) / r.height).toFixed(3));
+  }
+
+  const down = y > lastY + 4;
+  const up = y < lastY - 4;
+  if (y > vh * 0.6 && down) topBar.classList.add('hide');
+  else if (up || y <= vh * 0.6) topBar.classList.remove('hide');
+  lastY = y;
+}
 addEventListener('scroll', onScroll, { passive: true });
+addEventListener('resize', onScroll);
 onScroll();
 
 /* mouse parallax: video drifts a few px against the cursor */
@@ -81,6 +141,5 @@ function frame() {
   video.style.setProperty('--py', cy.toFixed(2) + 'px');
   const r = video.playbackRate + (rateTarget - video.playbackRate) * 0.05;
   if (Math.abs(r - video.playbackRate) > 0.002) video.playbackRate = r;
-  void dim;
 }
 frame();
