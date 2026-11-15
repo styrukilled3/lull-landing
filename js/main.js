@@ -61,14 +61,14 @@ async function start() {
   const pathX = (z) => Math.sin(-z * 0.011) * 30 + Math.sin(-z * 0.027) * 8;
   const ground = (x, z) => {
     const dx = x - pathX(z);
-    return Math.abs(dx) * 0.2 + vnoise(x * 0.04, z * 0.04) * 7 + vnoise(x * 0.12, z * 0.12) * 1.6 - 4;
+    return Math.abs(dx) * 0.11 + vnoise(x * 0.04, z * 0.04) * 7 + vnoise(x * 0.12, z * 0.12) * 1.6 - 4;
   };
 
   const pts = [];
   for (let i = 0; i <= 48; i++) {
     const z = -(i / 48) * L;
     const x = pathX(z);
-    pts.push(new THREE.Vector3(x, ground(x, z) + 2.0, z));
+    pts.push(new THREE.Vector3(x, ground(x, z) + 2.4, z));
   }
   const curve = new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0.5);
 
@@ -101,7 +101,18 @@ async function start() {
   // cells that face the camera and look fine at any angle; the rest stay roughly upright
   const ROUND_CELLS = new Set([1, 2, 4, 5, 7]);
 
-  function buildPoints(n, isLeaf) {
+  // ---- composition: two banks of flowers that swap dominance along the path, a thin winding trail between them ----
+  const BANK_PERIOD = 90;
+  const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) * 2;
+  const bankWeight = (z, side) =>
+    sm(0.12, 0.88, 0.5 + 0.5 * Math.cos((2 * Math.PI * (z + 15)) / BANK_PERIOD + (side < 0 ? 0 : Math.PI)));
+  // each cluster sticks to two species so every patch reads as one colour family
+  const LEFT_SETS = [[5, 7], [7, 4], [5, 4]];     // cream, cosmos, lily: cooler and paler
+  const RIGHT_SETS = [[2, 1], [1, 6], [2, 3]];    // daisy, coneflower, bell, side view: warm gold and amber
+  const COOL_CELLS = new Set([4, 5, 7]);
+
+  function pack(list, isLeaf) {
+    const n = list.length;
     const pos = new Float32Array(n * 3);
     const seed = new Float32Array(n);
     const type = new Float32Array(n);
@@ -110,60 +121,88 @@ async function start() {
     const cell = new Float32Array(n);
     const rot = new Float32Array(n);
     const bright = new Float32Array(n);
-    let i = 0;
-    let tries = 0;
-    while (i < n && tries < n * 40) {
-      tries++;
-      const z = -Math.random() * L;
-      const spread = (Math.random() + Math.random() + Math.random() - 1.5) * 2;
-      const x = pathX(z) + spread * 16;
-      // patches of growth with bare ground between them
-      const d = vnoise(x * 0.07 + 3.1, z * 0.07);
-      // keep a dark lane along the camera path so the headline has room, growth piles up on both sides
-      const lat = Math.abs(x - pathX(z));
-      const keep = isLeaf
-        ? (0.3 + 0.7 * sm(0.25, 0.6, d)) * (0.25 + 0.75 * sm(4, 14, lat))
-        : sm(0.42, 0.62, d) * sm(7, 16, lat);
-      if (Math.random() > keep) continue;
-
-      const y = ground(x, z) + (isLeaf ? Math.random() * 0.4 : 0.1 + Math.random() * 0.7);
-      pos.set([x, y, z], i * 3);
+    list.forEach((o, i) => {
+      pos.set([o.x, o.y, o.z], i * 3);
       seed[i] = Math.random();
       type[i] = isLeaf ? 1 : 0;
-      bright[i] = 0.72 + Math.random() * 0.5;
-
-      let c;
-      if (isLeaf) {
-        c = 8 + Math.floor(Math.random() * 4);
-        size[i] = 0.6 + Math.random() * 0.7;
-        tmp.copy(cWhite);
-      } else {
-        // species come in patches: pick by a jittered coarse grid cell, with a few strays
-        const jx = x + vnoise(x * 0.1, z * 0.1) * 12;
-        const jz = z + vnoise(x * 0.1 + 9, z * 0.1) * 12;
-        const base = Math.floor(hash2(Math.floor(jx / 15), Math.floor(jz / 15)) * 8);
-        c = Math.random() < 0.78 ? base : Math.floor(Math.random() * 8);
-        size[i] = 0.22 + Math.random() * 0.3;
-        const r = Math.random();
-        if (r < 0.65) tmp.copy(cGold);
-        else if (r < 0.88) tmp.copy(cGold).lerp(cWhite, 0.5);
-        else tmp.copy(cWood).lerp(cGold, 0.4);
-      }
-      cell[i] = c;
-      rot[i] = ROUND_CELLS.has(c) || isLeaf ? Math.random() * Math.PI * 2 : (Math.random() - 0.5) * 1.0;
-      col.set([tmp.r, tmp.g, tmp.b], i * 3);
-      i++;
-    }
+      col.set([o.r, o.g, o.b], i * 3);
+      size[i] = o.size;
+      cell[i] = o.cell;
+      rot[i] = o.rot;
+      bright[i] = 0.72 + Math.random() * 0.48;
+    });
     const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(pos.subarray(0, i * 3), 3));
-    geo.setAttribute('aSeed', new THREE.BufferAttribute(seed.subarray(0, i), 1));
-    geo.setAttribute('aType', new THREE.BufferAttribute(type.subarray(0, i), 1));
-    geo.setAttribute('aColor', new THREE.BufferAttribute(col.subarray(0, i * 3), 3));
-    geo.setAttribute('aSize', new THREE.BufferAttribute(size.subarray(0, i), 1));
-    geo.setAttribute('aCell', new THREE.BufferAttribute(cell.subarray(0, i), 1));
-    geo.setAttribute('aRot', new THREE.BufferAttribute(rot.subarray(0, i), 1));
-    geo.setAttribute('aBright', new THREE.BufferAttribute(bright.subarray(0, i), 1));
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
+    geo.setAttribute('aType', new THREE.BufferAttribute(type, 1));
+    geo.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
+    geo.setAttribute('aSize', new THREE.BufferAttribute(size, 1));
+    geo.setAttribute('aCell', new THREE.BufferAttribute(cell, 1));
+    geo.setAttribute('aRot', new THREE.BufferAttribute(rot, 1));
+    geo.setAttribute('aBright', new THREE.BufferAttribute(bright, 1));
     return geo;
+  }
+
+  function buildFlowers(n) {
+    const list = [];
+    let tries = 0;
+    while (list.length < n && tries < n * 80) {
+      tries++;
+      const z = -Math.random() * L;
+      const r = Math.random();
+      let lat, cell, size, weight;
+      if (r < 0.14) {
+        // thin trail that snakes down the middle and points into the distance
+        lat = 3.5 * Math.sin(z * 0.06 + 1.3) + gauss() * 0.9;
+        weight = 0.55;
+        const q = Math.random();
+        cell = q < 0.6 ? 0 : q < 0.9 ? 5 : 2;
+        size = 0.14 + Math.random() * 0.16;
+      } else {
+        const side = r < 0.57 ? -1 : 1;
+        const bank = 13 + 3 * Math.sin(z * 0.04 + side);
+        lat = side * (bank + gauss() * 4.5);
+        const patch = 0.35 + 0.65 * sm(0.3, 0.6, vnoise(lat * 0.2 + 3.1, z * 0.09));
+        weight = bankWeight(z, side) * patch;
+        const sets = side < 0 ? LEFT_SETS : RIGHT_SETS;
+        const set = sets[Math.floor(hash2(Math.floor((z + 15) / BANK_PERIOD), side) * sets.length)];
+        const q = Math.random();
+        cell = q < 0.55 ? set[0] : q < 0.92 ? set[1] : Math.floor(Math.random() * 8);
+        size = 0.22 + Math.random() * 0.28;
+      }
+      if (Math.random() > weight) continue;
+      const x = pathX(z) + lat;
+      const y = ground(x, z) + 0.1 + Math.random() * 0.6;
+      if (COOL_CELLS.has(cell)) tmp.copy(cWhite).lerp(cGold, 0.25);
+      else tmp.copy(cGold).lerp(cWood, Math.random() * 0.5);
+      list.push({
+        x, y, z, cell, size,
+        rot: ROUND_CELLS.has(cell) ? Math.random() * Math.PI * 2 : (Math.random() - 0.5) * 1.0,
+        r: tmp.r, g: tmp.g, b: tmp.b,
+      });
+    }
+    return pack(list, false);
+  }
+
+  function buildLeaves(n) {
+    const list = [];
+    let tries = 0;
+    while (list.length < n && tries < n * 20) {
+      tries++;
+      const z = -Math.random() * L;
+      const lat = (Math.random() - 0.5) * 80;
+      // a dark carpet everywhere, a bit thinner in the middle lane
+      if (Math.random() > 0.45 + 0.55 * sm(2, 14, Math.abs(lat))) continue;
+      const x = pathX(z) + lat;
+      list.push({
+        x, y: ground(x, z) + Math.random() * 0.4, z,
+        cell: 8 + Math.floor(Math.random() * 4),
+        size: 0.9 + Math.random() * 0.7,
+        rot: Math.random() * Math.PI * 2,
+        r: 1, g: 1, b: 1,
+      });
+    }
+    return pack(list, true);
   }
 
   const shared = {
@@ -294,8 +333,8 @@ async function start() {
     blending: THREE.AdditiveBlending,
   });
 
-  const flowerGeo = buildPoints(isMobile ? 7000 : 14000, false);
-  const leafGeo = buildPoints(isMobile ? 4500 : 9000, true);
+  const flowerGeo = buildFlowers(isMobile ? 7000 : 14000);
+  const leafGeo = buildLeaves(isMobile ? 9000 : 18000);
   const spriteFlowers = new THREE.Points(flowerGeo, spriteMat);
   const spriteLeaves = new THREE.Points(leafGeo, spriteMat);
   const halo = new THREE.Points(flowerGeo, haloMat);
@@ -306,7 +345,7 @@ async function start() {
   const FxShader = {
     uniforms: {
       tDiffuse: { value: null }, uTime: { value: 0 }, uVig: { value: 0 },
-      uSplit: { value: 0.0015 }, uAspect: { value: 1 }, uTilt: { value: 0.014 },
+      uSplit: { value: 0.0015 }, uAspect: { value: 1 }, uTilt: { value: 0.035 },
     },
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
     fragmentShader: /* glsl */`
@@ -317,17 +356,21 @@ async function start() {
       void main() {
         vec2 o = (vUv - 0.5) * uSplit;
         vec3 c = vec3(texture2D(tDiffuse, vUv + o).r, texture2D(tDiffuse, vUv).g, texture2D(tDiffuse, vUv - o).b);
-        float k = smoothstep(0.2, 0.5, abs(vUv.y - 0.5)) * uTilt;
+        // blur grows toward the edges: heavy on the near side (bottom, corners), light on the far side (top)
+        vec2 fq = (vUv - vec2(0.5, 0.4)) * vec2(1.0, 1.35);
+        float k = smoothstep(0.24, 0.72, length(fq));
+        k *= mix(1.0, 0.4, smoothstep(0.4, 0.58, vUv.y));
+        k *= uTilt;
         if (k > 0.0004) {
           vec3 acc = vec3(0.0);
-          for (int i = 0; i < 12; i++) {
+          for (int i = 0; i < 20; i++) {
             float a = float(i) * 2.39996;
-            float r = sqrt((float(i) + 0.5) / 12.0);
+            float r = sqrt((float(i) + 0.5) / 20.0);
             vec2 off = vec2(cos(a), sin(a)) * r * k;
             off.x /= uAspect;
             acc += texture2D(tDiffuse, vUv + off).rgb;
           }
-          c = mix(c, acc / 12.0, smoothstep(0.0, 0.004, k));
+          c = mix(c, acc / 20.0, smoothstep(0.0, 0.004, k));
         }
         c += (h(vUv * vec2(1920.0, 1080.0)) - 0.5) * 0.018;
         float d = distance(vUv, vec2(0.5));
