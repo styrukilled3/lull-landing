@@ -40,6 +40,17 @@ if (reduced) {
   if (p && p.catch) p.catch(() => {});
 }
 
+/* small row sits exactly inside the width of the second headline line */
+const sub = document.querySelector('.hero-sub');
+const l2 = document.querySelector('.l2 > span');
+function fitSub() {
+  if (!sub || !l2) return;
+  sub.style.width = innerWidth > 820 ? Math.round(l2.getBoundingClientRect().width) + 'px' : '';
+}
+addEventListener('resize', fitSub);
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(fitSub);
+fitSub();
+
 /* story words: index each one so they light up in reading order when the screen opens */
 if (scrub) {
   let n = 0;
