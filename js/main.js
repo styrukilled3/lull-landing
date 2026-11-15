@@ -11,6 +11,7 @@ const topBar = document.getElementById('top-bar');
 const scrub = document.getElementById('scrub');
 const ritual = document.getElementById('ritual');
 const thread = document.getElementById('thread');
+const chaps = [...document.querySelectorAll('.chap')];
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
@@ -90,7 +91,8 @@ function onScroll() {
   const y = scrollY;
 
   const t = clamp(y / (vh * 0.9));
-  bg.style.setProperty('--dim', (t * 0.82).toFixed(3));
+  bg.style.setProperty('--dim', (t * 0.4).toFixed(3));
+  bg.style.setProperty('--blur', (t * 16).toFixed(1) + 'px');
   hero.style.opacity = String(Math.max(0, 1 - t * 1.5));
 
   if (words.length && !reduced) {
@@ -107,6 +109,15 @@ function onScroll() {
   if (thread) {
     const r = ritual.getBoundingClientRect();
     thread.style.setProperty('--p', clamp((vh * 0.6 - r.top) / r.height).toFixed(3));
+  }
+
+  if (!reduced && innerWidth > 820) {
+    chaps.forEach((c) => {
+      const r = c.getBoundingClientRect();
+      const d = clamp((r.top + r.height / 2 - vh / 2) / vh, -1, 1);
+      c.querySelector('.art').style.transform = `translate3d(0,${(d * -70).toFixed(1)}px,0)`;
+      c.querySelector('.txt').style.transform = `translate3d(0,${(d * 26).toFixed(1)}px,0)`;
+    });
   }
 
   const down = y > lastY + 4;
