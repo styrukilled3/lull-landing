@@ -45,18 +45,20 @@ if (reduced) {
 /* story: split into words so each can light up with scroll */
 const words = [];
 if (scrub) {
-  const text = scrub.textContent.trim();
-  scrub.textContent = '';
-  text.split(/(\s+)/).forEach((tok) => {
-    if (/^\s+$/.test(tok)) {
-      scrub.appendChild(document.createTextNode(' '));
-      return;
-    }
-    const s = document.createElement('span');
-    s.className = 'w';
-    s.textContent = tok;
-    scrub.appendChild(s);
-    words.push(s);
+  scrub.querySelectorAll('.sl').forEach((line) => {
+    const text = line.textContent.trim();
+    line.textContent = '';
+    text.split(/(\s+)/).forEach((tok) => {
+      if (/^\s+$/.test(tok)) {
+        line.appendChild(document.createTextNode(' '));
+        return;
+      }
+      const sp = document.createElement('span');
+      sp.className = 'w';
+      sp.textContent = tok;
+      line.appendChild(sp);
+      words.push(sp);
+    });
   });
 }
 
