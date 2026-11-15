@@ -84,7 +84,7 @@ const io = new IntersectionObserver((entries) => {
     io.unobserve(e.target);
   });
 }, { threshold: 0.35 });
-document.querySelectorAll('.chap, .set').forEach((el) => io.observe(el));
+document.querySelectorAll('.chap, .set, .about').forEach((el) => io.observe(el));
 
 /* scroll-driven: video dim, hero fade, word light, thread growth, header hide */
 let lastY = scrollY;
