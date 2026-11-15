@@ -32,7 +32,7 @@ sound.addEventListener('click', () => {
 
 start().catch((err) => {
   console.error('lull: WebGL scene failed, falling back to static background', err);
-  document.body.classList.add('no-gl');
+  document.body.classList.add('no-gl', 'ready');
   loader.classList.add('gone');
 });
 
@@ -474,6 +474,7 @@ async function start() {
     composer.render();
 
     if (++frames === 3) loader.classList.add('gone');
+    if (frames === 20) document.body.classList.add('ready');
   }
   frame();
 }
