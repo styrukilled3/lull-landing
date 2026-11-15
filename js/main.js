@@ -184,6 +184,22 @@ if (gridEl) {
     d.style.top = (r / ROWS * 100) + '%';
     gridEl.appendChild(d);
   }
+  /* cell under the pointer frosts quickly and lets go slowly, leaving a trail */
+  if (!reduced) {
+    const timers = new Map();
+    let last = -1;
+    addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'touch') return;
+      const q = Math.min(COLS - 1, Math.floor(e.clientX / innerWidth * COLS));
+      const r = Math.min(ROWS - 1, Math.floor(e.clientY / innerHeight * ROWS));
+      const k = r * COLS + q;
+      if (k === last) return;
+      last = k;
+      clearTimeout(timers.get(k));
+      cells[k].classList.add('h');
+      timers.set(k, setTimeout(() => cells[k].classList.remove('h'), 700));
+    });
+  }
   const on = new Set();
   const flip = (k) => { cells[k].classList.add('f'); on.add(k); };
   while (on.size < 6) flip(Math.floor(Math.random() * N));

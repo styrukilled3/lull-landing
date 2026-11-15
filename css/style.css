@@ -284,4 +284,7 @@ body.ready .grid{opacity:1}
 .grid b{position:relative;box-shadow:inset 0 0 0 .5px rgba(241,234,218,.14)}
 .grid b::before{content:"";position:absolute;inset:0;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(2,3,2,.2);opacity:0;transition:opacity 2.8s ease}
 .grid b.f::before{opacity:1}
+.grid b.h::before{opacity:1;transition-duration:.45s;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.grid b{transition:box-shadow 2s ease}
+.grid b.h{box-shadow:inset 0 0 0 .5px rgba(203,160,82,.5);transition-duration:.4s}
 .grid i{position:absolute;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:#fff;box-shadow:0 0 8px 2px rgba(203,160,82,.7);opacity:.85}
