@@ -23,8 +23,9 @@ a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 h1,h2{font-family:var(--serif);font-weight:200}
 .sm{display:inline-block;font-style:normal;font-weight:300;font-size:max(13px,.15em);letter-spacing:0;line-height:1.3;color:var(--soft);vertical-align:baseline;margin:0 .9em;white-space:nowrap}
-.sm-t{vertical-align:top;margin-top:.6em}
-.sm-b{vertical-align:.1em}
+.sm-t,.sm-b{vertical-align:.55em}
+.sm-t{margin:0 0 0 1em}
+.sm-b{margin:0 1em 0 0}
 
 /* video background */
 .bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000 url(../assets/video/poster.jpg) center/cover}
@@ -74,7 +75,7 @@ main{position:fixed;inset:0;z-index:2}
   text-align:left;align-items:flex-start;padding:0 var(--gutter);
 }
 h1{
-  font-size:clamp(46px,10vw,168px);line-height:.92;letter-spacing:-.04em;color:var(--cream);
+  font-size:clamp(46px,9vw,150px);line-height:.92;letter-spacing:-.04em;color:var(--cream);
   text-shadow:0 2px 50px rgba(0,0,0,.55);
 }
 .hl{display:block;overflow:hidden;padding:.1em .06em .06em;white-space:nowrap}
@@ -277,13 +278,9 @@ body.ready .hero-note{opacity:1}
 .hl .sm{opacity:0;transition:opacity 1.6s ease 2.4s}
 body.ready .hl .sm{opacity:1}
 
-/* hairline grid with bright intersections */
-.grid{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity 2.4s ease 1.6s;
-  background:
-    linear-gradient(rgba(241,234,218,.13),rgba(241,234,218,.13)) 25% 0/1px 100% no-repeat,
-    linear-gradient(rgba(241,234,218,.13),rgba(241,234,218,.13)) 50% 0/1px 100% no-repeat,
-    linear-gradient(rgba(241,234,218,.13),rgba(241,234,218,.13)) 75% 0/1px 100% no-repeat,
-    linear-gradient(rgba(241,234,218,.13),rgba(241,234,218,.13)) 0 33.33%/100% 1px no-repeat,
-    linear-gradient(rgba(241,234,218,.13),rgba(241,234,218,.13)) 0 66.66%/100% 1px no-repeat}
+/* grid of cells: hairline borders, some cells frost the video behind them */
+.grid{position:fixed;inset:0;z-index:1;pointer-events:none;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);opacity:0;transition:opacity 2.4s ease 1.6s}
 body.ready .grid{opacity:1}
+.grid b{box-shadow:inset 0 0 0 .5px rgba(241,234,218,.16)}
+.grid b.f{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);background:rgba(2,3,2,.22)}
 .grid i{position:absolute;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:#fff;box-shadow:0 0 10px 2px rgba(203,160,82,.8)}
