@@ -79,15 +79,15 @@ body.ready .hl>span{transform:none;opacity:1;filter:none}
 body.ready .cap,body.ready .go{opacity:1}
 
 /* story: words light up as you read */
-.story{min-height:170vh;display:flex;align-items:center;padding:18vh var(--gutter)}
-.scrubs{width:100%;display:flex;flex-direction:column;gap:clamp(90px,24vh,240px)}
+.story{min-height:110vh;display:flex;align-items:center;padding:14vh var(--gutter)}
+.scrubs{width:100%;display:flex;flex-direction:column;gap:clamp(28px,7vh,72px)}
 .sl{
   font-family:var(--serif);font-weight:300;
-  font-size:clamp(22px,2.7vw,40px);line-height:1.3;letter-spacing:-.005em;max-width:16em;
+  font-size:clamp(17px,1.8vw,26px);line-height:1.4;letter-spacing:0;max-width:19em;
 }
 .sl-1{align-self:flex-start;text-align:left}
-.sl-2{align-self:center;text-align:center;max-width:20em}
-.sl-3{align-self:flex-end;text-align:right;margin-top:clamp(20px,8vh,90px)}
+.sl-2{align-self:center;text-align:center;max-width:22em}
+.sl-3{align-self:flex-end;text-align:right;margin-top:clamp(0px,2vh,24px)}
 .sl .w{opacity:.16;transition:opacity .35s ease;white-space:pre-wrap}
 
 /* ritual: three steps hang off one thread */
@@ -197,7 +197,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offse
   .chap .art,.chap.flip .art{grid-column:1;grid-row:1;justify-items:start}
   .art svg{width:150px}
   .facts div{grid-template-columns:6.5em 1fr}
-  .story{min-height:130vh}
+  .story{min-height:100vh}
   .sl-2{text-align:left;align-self:flex-start;padding-left:12vw}
   .sl-3{text-align:left;align-self:flex-end;max-width:14em}
   .corner{left:var(--gutter);justify-content:center;bottom:22px}
