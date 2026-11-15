@@ -231,7 +231,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offse
   .chap::after,.chap.flip::after{right:-4vw;left:auto;font-size:62vw;bottom:2vh}
   .chap .txt,.chap.flip .txt{margin:0}
   .chap .body,.facts,.price{margin-left:0}
-  .go{margin-left:0}
+  .go,.hero-sub{margin-left:0}
   .chap h2{white-space:normal}
   .hl{white-space:normal}
   .sm-t{margin-left:0}
@@ -257,7 +257,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offse
   .screen,.screen.active{transition:none!important;filter:none!important}
   .bg::after,.bgv{transition:none!important}
   .loader span{animation:none}
-  .hl .sm,.hero-note,.grid{opacity:1!important;transition:none!important}
+  .hero-sub,.hl .sm,.hero-note,.grid{opacity:1!important;transition:none!important}
   .hl>span,.cap,.go,.chap .txt>*,.set .was,.set .body,.set .set-title,.set .note,.set .btn,.now{opacity:1!important;filter:none!important;transform:none!important;transition:none!important}
   .sl .w{opacity:1!important}
   .art svg *{stroke-dashoffset:0!important;transition:none!important}
@@ -289,3 +289,6 @@ body[data-screen=top].ready .grid{opacity:1;transition:opacity 2.4s ease 1.6s}
 .grid b.h::before{opacity:1;visibility:visible;background:rgba(255,246,225,.08);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transition:opacity .45s ease,visibility 0s}
 .grid b.h{box-shadow:inset 0 0 0 .5px rgba(203,160,82,.55);transition-duration:.4s}
 .grid i{position:absolute;width:3px;height:3px;margin:-1.5px 0 0 -1.5px;border-radius:50%;background:#fff;box-shadow:0 0 7px 1px rgba(203,160,82,.7);opacity:.8}
+
+.hero-sub{display:flex;flex-wrap:wrap;gap:.4em clamp(28px,4vw,64px);margin-top:clamp(14px,3vh,30px);margin-left:clamp(40px,14vw,260px);padding-left:.06em;font-size:clamp(14px,1.25vw,18px);font-weight:300;line-height:1.4;color:var(--soft);text-shadow:0 2px 30px rgba(0,0,0,.6);opacity:0;transition:opacity 1.8s ease 2.4s}
+body.ready .hero-sub{opacity:1}
