@@ -9,18 +9,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Manrope:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=8">
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-  }
-}
-</script>
+<link rel="stylesheet" href="css/style.css?v=9">
 </head>
 <body>
-<div id="valley" aria-hidden="true"></div>
+<div class="bg" id="bg" aria-hidden="true">
+  <video id="bgv" class="bgv" muted playsinline loop autoplay preload="auto" poster="assets/video/poster.jpg">
+    <source src="assets/video/hero.mp4" type="video/mp4">
+  </video>
+  <div class="shade" id="shade"></div>
+</div>
 
 <header class="top">
   <a class="logo" href="#top" aria-label="lull">lull</a>
@@ -33,7 +30,7 @@
 
 <main id="top">
   <section class="hero">
-    <h1>Off the world,<br><em>on yourself.</em></h1>
+    <h1><span class="hl" style="--d:.35s"><span>Off the world,</span></span><span class="hl gold" style="--d:1.15s"><span>on yourself.</span></span></h1>
     <p class="cap">Tạm gác thế giới ngoài kia.<br>Quay về chăm sóc chính mình.</p>
     <a class="go" href="#ritual" id="go" aria-label="Khám phá nghi thức 3 bước">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
@@ -133,6 +130,6 @@
 
 <div class="loader" id="loader"><span></span></div>
 
-<script type="module" src="js/main.js?v=8"></script>
+<script type="module" src="js/main.js?v=9"></script>
 </body>
 </html>

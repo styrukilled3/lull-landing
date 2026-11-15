@@ -1,6 +1,6 @@
 # lull landing
 
-Landing page for lull Ritual. Static site: HTML, CSS and ES modules, three.js loaded from a CDN. No build step.
+Landing page for lull Ritual. Static site: HTML, CSS and one small ES module. Hero is a looping video (assets/video/hero.mp4, ping-pong loop, poster.jpg). No build step, no dependencies.
 
 Run locally (ES modules need http, not file://):
 

@@ -18,11 +18,12 @@ body{
 }
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-em{font-style:italic;color:var(--gold)}
 
-#valley{position:fixed;inset:0;z-index:0}
-#valley canvas{display:block;width:100%!important;height:100%!important}
-body.no-gl #valley{background:radial-gradient(120% 90% at 50% 100%,#1c4a2b 0%,var(--ink) 70%)}
+/* video background */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000 url(../assets/video/poster.jpg) center/cover}
+.bgv{position:absolute;inset:-3%;width:106%;height:106%;object-fit:cover;transform:translate3d(var(--px,0),var(--py,0),0);will-change:transform}
+.shade{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 45%,rgba(0,0,0,0) 35%,rgba(0,0,0,.55) 100%),rgba(2,3,2,var(--dim,0))}
 
 /* header */
 .top{
@@ -40,7 +41,7 @@ body.no-gl #valley{background:radial-gradient(120% 90% at 50% 100%,#1c4a2b 0%,va
 .pill:hover{transform:translateY(-1px)}
 
 main{position:relative;z-index:2}
-h1,.cap{text-shadow:0 2px 32px rgba(5,18,10,.55)}
+h1,.cap{text-shadow:0 2px 40px rgba(0,0,0,.6)}
 section{position:relative}
 .wrap{width:min(1100px,calc(100% - 40px));margin:0 auto}
 .narrow{width:min(640px,calc(100% - 40px))}
@@ -57,6 +58,16 @@ h1{
   font-size:calc(158*var(--u));
   line-height:.92;letter-spacing:-.012em;color:var(--cream);
 }
+.hl{display:block;overflow:hidden;padding:.08em .04em .04em}
+.hl>span{display:block;transform:translateY(108%);opacity:0;
+  transition:transform 1.6s cubic-bezier(.2,.7,.1,1) var(--d),opacity 1.6s ease var(--d);
+  animation:hlFail .01s 9s forwards}
+.hl.gold{color:var(--gold)}
+.hl.gold>span{transition-duration:2.6s}
+body.ready .hl>span{transform:none;opacity:1}
+@keyframes hlFail{to{transform:none;opacity:1}}
+.cap,.go{opacity:0;transition:opacity 1.8s ease 2.2s,background .3s,color .3s;animation:hlFail .01s 9s forwards}
+body.ready .cap,body.ready .go{opacity:1}
 .cap{margin-top:calc(48*var(--u));font-size:calc(20*var(--u));line-height:1.3;color:var(--cream)}
 .go{
   display:grid;place-items:center;margin-top:calc(34*var(--u));
@@ -123,9 +134,9 @@ h2{font-family:Fraunces,serif;font-weight:300;font-size:clamp(30px,3.4vw,46px);l
 .loader span{width:calc(9*var(--u));height:calc(9*var(--u));min-width:6px;min-height:6px;border-radius:50%;background:var(--cream);animation:pulse 1.2s ease-in-out infinite}
 @keyframes pulse{50%{transform:scale(.4);opacity:.4}}
 
-/* interface reveal: fades in 1.6s once the valley is up (failsafe after 8s if JS never runs) */
-.top,.hero,.corner{opacity:0;transition:opacity 1.6s ease;animation:uiFail .01s 8s forwards}
-body.ready .top,body.ready .hero,body.ready .corner{opacity:1}
+/* interface reveal: fades in 1.6s once the hero video is ready (failsafe after 8s if JS never runs) */
+.top,.corner{opacity:0;transition:opacity 1.6s ease;animation:uiFail .01s 8s forwards}
+body.ready .top,body.ready .corner{opacity:1}
 @keyframes uiFail{to{opacity:1}}
 
 /* reveal */
