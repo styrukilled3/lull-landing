@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=16">
+<link rel="stylesheet" href="css/style.css?v=17">
 </head>
 <body>
 <div class="bg" id="bg" aria-hidden="true">
@@ -30,18 +30,18 @@
 </header>
 
 <main id="top">
-  <section class="hero">
+  <section class="hero screen" data-id="top" data-blur="0" data-dim="0">
     <h1>
       <span class="hl l1" style="--d:.35s"><span>Off the world,</span></span>
       <span class="hl l2" style="--d:1.2s"><span>on yourself.</span></span>
     </h1>
     <p class="cap">Tạm gác thế giới ngoài kia.<br>Quay về chăm sóc chính mình.</p>
-    <a class="go" href="#ritual" id="go" aria-label="Khám phá nghi thức 3 bước">
+    <a class="go" href="#about" id="go" aria-label="Khám phá nghi thức 3 bước">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
     </a>
   </section>
 
-  <section class="about" id="about">
+  <section class="about screen" id="about" data-id="about" data-blur="9" data-dim=".3">
     <div class="about-in">
       <h2 class="ab-title" style="--i:0">Về chúng tôi</h2>
       <p class="ab-name" style="--i:1">lull lấy cảm hứng từ lullaby, bài hát ru, và trạng thái lắng dịu, chậm lại sau những bộn bề.</p>
@@ -58,7 +58,7 @@
     </div>
   </section>
 
-  <section class="story" id="story">
+  <section class="story screen" id="story" data-id="story" data-blur="13" data-dim=".36">
     <div class="scrubs" id="scrub">
       <p class="sl sl-1">Kết thúc một ngày dài không có nghĩa là tâm trí đã thực sự được nghỉ ngơi.</p>
       <p class="sl sl-2">Nhiều người vẫn mang căng thẳng lên giường.</p>
@@ -68,9 +68,7 @@
 
 
 
-  <section class="ritual" id="ritual">
-    <div class="thread" aria-hidden="true"><i id="thread"></i></div>
-
+  <section class="screen rs" id="ritual" data-id="mind" data-blur="14" data-dim=".4">
     <article class="chap">
       <div class="art" aria-hidden="true">
         <svg viewBox="0 0 120 120">
@@ -91,7 +89,9 @@
         <p class="price" style="--i:5"><span class="count" data-to="59000">59.000</span>đ <small>/ 50g</small></p>
       </div>
     </article>
+  </section>
 
+  <section class="screen rs" id="eyes" data-id="eyes" data-blur="14" data-dim=".4">
     <article class="chap flip">
       <div class="art" aria-hidden="true">
         <svg viewBox="0 0 120 120">
@@ -112,7 +112,9 @@
         <p class="price" style="--i:5"><span class="count" data-to="159000">159.000</span>đ <small>/ 15g</small></p>
       </div>
     </article>
+  </section>
 
+  <section class="screen rs" id="slow" data-id="slow" data-blur="14" data-dim=".4">
     <article class="chap">
       <div class="art" aria-hidden="true">
         <svg viewBox="0 0 120 120">
@@ -134,7 +136,8 @@
     </article>
   </section>
 
-  <section class="set" id="set">
+
+  <section class="set screen" id="set" data-id="set" data-blur="10" data-dim=".34">
     <div class="set-in">
       <h2 class="set-title">lull Ritual Set</h2>
       <p class="body">Mind Off, Eyes Off và Slow Off trong một bộ, kèm mã QR nghe playlist 432 Hz và bài tập thở.</p>
@@ -145,16 +148,26 @@
       <p class="note">Tiết kiệm 28.000đ so với mua lẻ.</p>
       <a class="btn" href="#">Nhận lull Ritual Set</a>
     </div>
-  </section>
-
-  <footer class="foot">
+    <footer class="foot">
     <p class="foot-line">Off the world, on yourself.</p>
     <p class="foot-sub">lull, chăm sóc giấc ngủ.</p>
-  </footer>
+    </footer>
+  </section>
+
 </main>
 
+<nav class="rail" id="rail" aria-label="Các phần của trang">
+  <button data-go="top" aria-label="Mở đầu"></button>
+  <button data-go="about" aria-label="Về chúng tôi"></button>
+  <button data-go="story" aria-label="Câu chuyện"></button>
+  <button data-go="mind" aria-label="Bước 1, Mind Off"></button>
+  <button data-go="eyes" aria-label="Bước 2, Eyes Off"></button>
+  <button data-go="slow" aria-label="Bước 3, Slow Off"></button>
+  <button data-go="set" aria-label="Ritual Set"></button>
+</nav>
+
 <div class="corner" id="corner">
-  <span>Cuộn để lang thang</span><i></i>
+  <span>Lăn chuột để đi tiếp</span><i></i>
   <button class="sound" id="sound" aria-pressed="false" aria-label="Âm thanh nền">
     <svg viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5Z"/><path class="w" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="x" d="m16 10 4 4m0-4-4 4"/></svg>
   </button>
@@ -162,6 +175,6 @@
 
 <div class="loader" id="loader"><span></span></div>
 
-<script type="module" src="js/main.js?v=16"></script>
+<script type="module" src="js/main.js?v=17"></script>
 </body>
 </html>

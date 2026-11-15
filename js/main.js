@@ -3,15 +3,13 @@ import * as audio from './audio.js';
 const body = document.body;
 const video = document.getElementById('bgv');
 const bg = document.getElementById('bg');
-const hero = document.querySelector('.hero');
 const loader = document.getElementById('loader');
 const go = document.getElementById('go');
 const sound = document.getElementById('sound');
-const topBar = document.getElementById('top-bar');
 const scrub = document.getElementById('scrub');
-const ritual = document.getElementById('ritual');
-const thread = document.getElementById('thread');
-const chaps = [...document.querySelectorAll('.chap')];
+const root = document.documentElement;
+const screens = [...document.querySelectorAll('.screen')];
+const railBtns = [...document.querySelectorAll('.rail button')];
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
@@ -22,7 +20,7 @@ sound.addEventListener('click', () => {
   sound.setAttribute('aria-pressed', String(on));
 });
 
-/* loader: lift once the first video frame is ready, or after 1.6s whichever comes first */
+/* loader */
 let revealed = false;
 const reveal = () => {
   if (revealed) return;
@@ -42,102 +40,144 @@ if (reduced) {
   if (p && p.catch) p.catch(() => {});
 }
 
-/* story: split into words so each can light up with scroll */
-const words = [];
+/* story words: index each one so they light up in reading order when the screen opens */
 if (scrub) {
+  let n = 0;
   scrub.querySelectorAll('.sl').forEach((line) => {
     const text = line.textContent.trim();
     line.textContent = '';
     text.split(/(\s+)/).forEach((tok) => {
-      if (/^\s+$/.test(tok)) {
-        line.appendChild(document.createTextNode(' '));
-        return;
-      }
+      if (/^\s+$/.test(tok)) { line.appendChild(document.createTextNode(' ')); return; }
       const sp = document.createElement('span');
       sp.className = 'w';
+      sp.style.setProperty('--n', n++);
       sp.textContent = tok;
       line.appendChild(sp);
-      words.push(sp);
     });
   });
 }
 
-/* one-shot reveals: chapters and the set section, with price count-up */
-const fmt = (n) => n.toLocaleString('vi-VN');
+/* price count-up */
+const fmt = (v) => v.toLocaleString('vi-VN');
 function countUp(el) {
   const to = Number(el.dataset.to);
-  if (!to || reduced) { el.textContent = fmt(to || 0); return; }
-  const t0 = performance.now();
-  const dur = 1600;
+  if (!to) return;
+  if (reduced) { el.textContent = fmt(to); return; }
+  el.textContent = '0';
+  const t0 = performance.now() + 700;
   const tick = (now) => {
-    const k = clamp((now - t0) / dur);
+    const k = clamp((now - t0) / 1600);
     el.textContent = fmt(Math.round(to * (1 - Math.pow(1 - k, 3))));
     if (k < 1) requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
 }
-const io = new IntersectionObserver((entries) => {
-  entries.forEach((e) => {
-    if (!e.isIntersecting) return;
-    e.target.classList.add('in');
-    e.target.querySelectorAll('.count').forEach(countUp);
-    io.unobserve(e.target);
-  });
-}, { threshold: 0.35 });
-document.querySelectorAll('.chap, .set, .about').forEach((el) => io.observe(el));
 
-/* scroll-driven: video dim, hero fade, word light, thread growth, header hide */
-let lastY = scrollY;
-function onScroll() {
-  const vh = innerHeight;
-  const y = scrollY;
+/* screen engine */
+let cur = -1;
+let locked = false;
+const leaveTimers = new Map();
+const idIndex = (id) => screens.findIndex((s) => s.dataset.id === id);
 
-  const t = clamp(y / (vh * 0.9));
-  bg.style.setProperty('--dim', (t * 0.4).toFixed(3));
-  bg.style.setProperty('--blur', (t * 16).toFixed(1) + 'px');
-  hero.style.opacity = String(Math.max(0, 1 - t * 1.5));
-
-  if (words.length && !reduced) {
-    const r = scrub.getBoundingClientRect();
-    const p = clamp((vh * 0.78 - r.top) / (r.height + vh * 0.28));
-    const lit = p * (words.length + 6);
-    words.forEach((w, i) => {
-      w.style.opacity = (0.16 + 0.84 * clamp(lit - i)).toFixed(2);
-    });
-  } else if (words.length) {
-    words.forEach((w) => { w.style.opacity = '1'; });
-  }
-
-  if (thread) {
-    const r = ritual.getBoundingClientRect();
-    thread.style.setProperty('--p', clamp((vh * 0.6 - r.top) / r.height).toFixed(3));
-  }
-
-  if (!reduced && innerWidth > 820) {
-    chaps.forEach((c) => {
-      const r = c.getBoundingClientRect();
-      const d = clamp((r.top + r.height / 2 - vh / 2) / vh, -1, 1);
-      c.querySelector('.art').style.transform = `translate3d(0,${(d * -70).toFixed(1)}px,0)`;
-      c.querySelector('.txt').style.transform = `translate3d(0,${(d * 26).toFixed(1)}px,0)`;
-    });
-  }
-
-  const down = y > lastY + 4;
-  const up = y < lastY - 4;
-  if (y > vh * 0.6 && down) topBar.classList.add('hide');
-  else if (up || y <= vh * 0.6) topBar.classList.remove('hide');
-  lastY = y;
+function mark(el, on) {
+  el.classList.toggle('in', on);
+  const chap = el.querySelector('.chap');
+  if (chap) chap.classList.toggle('in', on);
 }
-addEventListener('scroll', onScroll, { passive: true });
-addEventListener('resize', onScroll);
-onScroll();
 
-/* mouse parallax: video drifts a few px against the cursor */
+function show(i, { push = true } = {}) {
+  i = clamp(i, 0, screens.length - 1);
+  if (i === cur) return;
+  const prev = cur;
+  cur = i;
+  screens.forEach((s, k) => {
+    s.classList.toggle('active', k === i);
+    s.classList.toggle('past', k < i);
+    s.classList.toggle('next', k > i);
+    s.setAttribute('aria-hidden', String(k !== i));
+  });
+  const el = screens[i];
+  el.scrollTop = 0;
+  clearTimeout(leaveTimers.get(el));
+  mark(el, true);
+  el.querySelectorAll('.count').forEach(countUp);
+  if (prev >= 0) {
+    const old = screens[prev];
+    leaveTimers.set(old, setTimeout(() => { if (screens[cur] !== old) mark(old, false); }, 1300));
+  }
+  bg.style.setProperty('--blur', (el.dataset.blur || 0) + 'px');
+  bg.style.setProperty('--dim', el.dataset.dim || 0);
+  railBtns.forEach((b) => b.classList.toggle('on', b.dataset.go === el.dataset.id));
+  if (push) {
+    const h = el.dataset.id === 'top' ? location.pathname + location.search : '#' + el.dataset.id;
+    history.pushState({ i }, '', h);
+  }
+  locked = true;
+  setTimeout(() => { locked = false; }, reduced ? 100 : 1250);
+}
+const next = () => show(cur + 1);
+const prevScreen = () => show(cur - 1);
+
+/* can the active screen still scroll inside itself? (small windows, phones) */
+function canScroll(dir) {
+  const s = screens[cur];
+  if (s.scrollHeight <= s.clientHeight + 2) return false;
+  return dir > 0 ? s.scrollTop + s.clientHeight < s.scrollHeight - 2 : s.scrollTop > 2;
+}
+
+addEventListener('wheel', (e) => {
+  const dir = Math.sign(e.deltaY);
+  if (!dir || Math.abs(e.deltaY) < 8) return;
+  if (canScroll(dir)) return;
+  e.preventDefault();
+  if (locked) return;
+  dir > 0 ? next() : prevScreen();
+}, { passive: false });
+
+addEventListener('keydown', (e) => {
+  if (e.target.closest && e.target.closest('input,textarea')) return;
+  const k = e.key;
+  if (['ArrowDown', 'PageDown', ' '].includes(k)) { e.preventDefault(); if (!locked) next(); }
+  else if (['ArrowUp', 'PageUp'].includes(k)) { e.preventDefault(); if (!locked) prevScreen(); }
+  else if (k === 'Home') { e.preventDefault(); show(0); }
+  else if (k === 'End') { e.preventDefault(); show(screens.length - 1); }
+});
+
+let ty0 = null;
+addEventListener('touchstart', (e) => { ty0 = e.touches[0].clientY; }, { passive: true });
+addEventListener('touchend', (e) => {
+  if (ty0 === null) return;
+  const dy = ty0 - e.changedTouches[0].clientY;
+  ty0 = null;
+  if (Math.abs(dy) < 50 || locked) return;
+  if (canScroll(Math.sign(dy))) return;
+  dy > 0 ? next() : prevScreen();
+}, { passive: true });
+
+/* links, rail and back button */
+document.querySelectorAll('a[href^="#"]:not([href="#"]), .rail button').forEach((el) => {
+  el.addEventListener('click', (e) => {
+    const id = el.dataset.go || (el.getAttribute('href') || '').slice(1);
+    const i = idIndex(id === 'ritual' ? 'mind' : id || 'top');
+    if (i < 0) return;
+    e.preventDefault();
+    show(i);
+  });
+});
+addEventListener('popstate', () => {
+  const id = location.hash.slice(1) || 'top';
+  const i = idIndex(id === 'ritual' ? 'mind' : id);
+  if (i >= 0) show(i, { push: false });
+});
+const start = idIndex((location.hash.slice(1) === 'ritual' ? 'mind' : location.hash.slice(1)) || 'top');
+show(start < 0 ? 0 : start, { push: false });
+
+/* mouse: video drifts, art and text shift on different planes for depth */
 let tx = 0, ty = 0, cx = 0, cy = 0;
 if (!reduced) {
   addEventListener('pointermove', (e) => {
-    tx = -((e.clientX / innerWidth) * 2 - 1) * 14;
-    ty = -((e.clientY / innerHeight) * 2 - 1) * 9;
+    tx = (e.clientX / innerWidth) * 2 - 1;
+    ty = (e.clientY / innerHeight) * 2 - 1;
   });
 }
 
@@ -150,8 +190,10 @@ function frame() {
   requestAnimationFrame(frame);
   cx += (tx - cx) * 0.06;
   cy += (ty - cy) * 0.06;
-  video.style.setProperty('--px', cx.toFixed(2) + 'px');
-  video.style.setProperty('--py', cy.toFixed(2) + 'px');
+  video.style.setProperty('--px', (-cx * 14).toFixed(2) + 'px');
+  video.style.setProperty('--py', (-cy * 9).toFixed(2) + 'px');
+  root.style.setProperty('--mx', cx.toFixed(3));
+  root.style.setProperty('--my', cy.toFixed(3));
   const r = video.playbackRate + (rateTarget - video.playbackRate) * 0.05;
   if (Math.abs(r - video.playbackRate) > 0.002) video.playbackRate = r;
 }
