@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=17">
+<link rel="stylesheet" href="css/style.css?v=19">
 </head>
 <body>
 <div class="bg" id="bg" aria-hidden="true">
@@ -35,10 +35,13 @@
       <span class="hl l1" style="--d:.35s"><span>Off the world,</span></span>
       <span class="hl l2" style="--d:1.2s"><span>on yourself.</span></span>
     </h1>
-    <p class="cap">Tạm gác thế giới ngoài kia.<br>Quay về chăm sóc chính mình.</p>
-    <a class="go" href="#about" id="go" aria-label="Khám phá nghi thức 3 bước">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
-    </a>
+    <div class="hero-row">
+      <p class="cap cap-l">Tạm gác thế giới ngoài kia.</p>
+      <a class="go" href="#about" id="go" aria-label="Khám phá lull">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
+      </a>
+      <p class="cap cap-r">Quay về chăm sóc chính mình.</p>
+    </div>
   </section>
 
   <section class="about screen" id="about" data-id="about" data-blur="9" data-dim=".3">
@@ -69,7 +72,7 @@
 
 
   <section class="screen rs" id="ritual" data-id="mind" data-blur="14" data-dim=".4">
-    <article class="chap">
+    <article class="chap" data-n="01">
       <div class="art" aria-hidden="true">
         <svg viewBox="0 0 120 120">
           <path pathLength="1" d="M44 38c0-8 6-14 16-14s16 6 16 14"/>
@@ -92,7 +95,7 @@
   </section>
 
   <section class="screen rs" id="eyes" data-id="eyes" data-blur="14" data-dim=".4">
-    <article class="chap flip">
+    <article class="chap flip" data-n="02">
       <div class="art" aria-hidden="true">
         <svg viewBox="0 0 120 120">
           <rect pathLength="1" x="46" y="12" width="28" height="20" rx="4"/>
@@ -115,7 +118,7 @@
   </section>
 
   <section class="screen rs" id="slow" data-id="slow" data-blur="14" data-dim=".4">
-    <article class="chap">
+    <article class="chap" data-n="03">
       <div class="art" aria-hidden="true">
         <svg viewBox="0 0 120 120">
           <circle pathLength="1" cx="60" cy="30" r="16"/>
@@ -175,6 +178,6 @@
 
 <div class="loader" id="loader"><span></span></div>
 
-<script type="module" src="js/main.js?v=17"></script>
+<script type="module" src="js/main.js?v=19"></script>
 </body>
 </html>
