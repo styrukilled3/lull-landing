@@ -160,8 +160,8 @@ async function start() {
         size = 0.14 + Math.random() * 0.16;
       } else {
         const side = r < 0.57 ? -1 : 1;
-        const bank = 13 + 3 * Math.sin(z * 0.04 + side);
-        lat = side * (bank + gauss() * 4.5);
+        const bank = 8 + 2.5 * Math.sin(z * 0.04 + side);
+        lat = side * (bank + Math.abs(gauss()) * 5 + 0.5);
         const patch = 0.35 + 0.65 * sm(0.3, 0.6, vnoise(lat * 0.2 + 3.1, z * 0.09));
         weight = bankWeight(z, side) * patch;
         const sets = side < 0 ? LEFT_SETS : RIGHT_SETS;
@@ -226,8 +226,7 @@ async function start() {
       vec3 p = position;
       float s = aSeed * 6.2831;
       float sway = (1.0 - uDisperse) * uSway;
-      p.x += sin(uTime * 0.6 + s * 3.0 + p.z * 0.08) * 0.07 * sway;
-      p.y += sin(uTime * 0.5 + s * 2.0) * 0.03 * sway;
+      
       vec3 dir = normalize(vec3(sin(s * 7.0), abs(cos(s * 5.0)) * 0.9 + 0.25, cos(s * 3.0)));
       p += dir * uDisperse * (3.0 + aSeed * 9.0);
       p += vec3(sin(uTime * 0.45 + s * 5.0), cos(uTime * 0.38 + s * 4.0), sin(uTime * 0.3 + s * 3.0)) * uDisperse * 1.3;
@@ -254,23 +253,23 @@ async function start() {
 
       bool leaf = aType > 0.5;
       float grow = leaf ? smoothstep(240.0, 60.0, dist) : smoothstep(90.0, 14.0, dist);
-      float sz = aSize * (leaf ? (0.4 + 0.6 * grow) : (0.15 + 0.85 * grow)) * uSizeMul;
+      float sz = aSize * uSizeMul;
       sz *= mix(1.0, 0.5, uDisperse);
-      // sub-pixel points alias and twinkle while the camera moves, so drop them
+      // tiny sprites fade to black before they vanish, so nothing pops or shimmers
       float px = sz * uScale / dist;
-      if (px < 2.5) {
+      if (px < 1.5) {
         gl_Position = vec4(3.0, 3.0, 3.0, 1.0);
         gl_PointSize = 0.0;
         return;
       }
       gl_PointSize = min(px, uMax);
 
-      vFog = max(smoothstep(30.0, leaf ? 240.0 : 190.0, dist), 1.0 - uReveal);
+      vFog = max(max(smoothstep(30.0, leaf ? 240.0 : 190.0, dist), 1.0 - smoothstep(1.5, 6.0, px)), 1.0 - uReveal);
       vAlpha = uHalo > 0.5 ? uReveal * (1.0 - vFog) * (0.25 + 0.75 * grow) * 0.3 * (1.0 + uDisperse * 0.8) : 1.0;
       vColor = aColor;
       vBright = aBright;
       vCell = aCell;
-      vRot = aRot + (leaf ? 0.0 : sin(uTime * 0.4 + s * 2.0) * 0.08 * sway);
+      vRot = aRot;
     }
   `;
 
@@ -289,7 +288,7 @@ async function start() {
       vec2 uv = vec2((col + pc.x) * 0.25, 1.0 - (row + pc.y) / 3.0);
       vec4 t = texture2D(uAtlas, uv);
       if (t.a < 0.02) discard;
-      vec3 rgb = t.rgb * vBright * (1.0 + vGlow * 1.6);
+      vec3 rgb = t.rgb * vBright * 0.9 * (1.0 + vGlow * 0.5);
       rgb = mix(rgb, uFogColor, vFog);
       // alpha only drives alpha-to-coverage on the multisampled target, which smooths the cut-out edge
       gl_FragColor = vec4(rgb, t.a);
@@ -333,13 +332,13 @@ async function start() {
     blending: THREE.AdditiveBlending,
   });
 
-  const flowerGeo = buildFlowers(isMobile ? 7000 : 14000);
+  const flowerGeo = buildFlowers(isMobile ? 10000 : 24000);
   const leafGeo = buildLeaves(isMobile ? 9000 : 18000);
   const spriteFlowers = new THREE.Points(flowerGeo, spriteMat);
   const spriteLeaves = new THREE.Points(leafGeo, spriteMat);
   const halo = new THREE.Points(flowerGeo, haloMat);
   [spriteFlowers, spriteLeaves, halo].forEach((o) => { o.frustumCulled = false; });
-  scene.add(spriteLeaves, spriteFlowers, halo);
+  scene.add(spriteLeaves, spriteFlowers);
 
   /* ---------- post: bloom, tilt-shift blur, split-RGB grain, vignette ---------- */
   const FxShader = {
@@ -372,7 +371,7 @@ async function start() {
           }
           c = mix(c, acc / 20.0, smoothstep(0.0, 0.004, k));
         }
-        c += (h(vUv * vec2(1920.0, 1080.0)) - 0.5) * 0.018;
+        c += (h(vUv * vec2(1920.0, 1080.0)) - 0.5) * 0.01;
         float d = distance(vUv, vec2(0.5));
         float v = 1.0 - smoothstep(0.3 - uVig * 0.1, 0.98, d);
         c *= mix(0.3, 1.0, v);
@@ -389,7 +388,7 @@ async function start() {
   composer.setPixelRatio(PR);
   composer.setSize(innerWidth, innerHeight);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), isMobile ? 0.4 : 0.5, 0.6, 0.55);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), isMobile ? 0.12 : 0.16, 0.5, 0.85);
   composer.addPass(bloom);
   const fx = new ShaderPass(FxShader);
   composer.addPass(fx);
@@ -456,7 +455,6 @@ async function start() {
 
     const pos = curve.getPointAt(tCur);
     camera.position.copy(pos);
-    if (!reduced) camera.position.y += Math.sin(time * 0.7) * 0.05;
     const look = curve.getPointAt(Math.min(tCur + 0.025, 1));
     look.y -= 2.6;
     camera.lookAt(look);
