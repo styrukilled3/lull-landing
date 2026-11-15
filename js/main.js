@@ -172,6 +172,35 @@ addEventListener('popstate', () => {
 const start = idIndex((location.hash.slice(1) === 'ritual' ? 'mind' : location.hash.slice(1)) || 'top');
 show(start < 0 ? 0 : start, { push: false });
 
+/* frosted grid: cells take turns going soft, never more than a third at once */
+const gridEl = document.getElementById('grid');
+if (gridEl) {
+  const COLS = 6, ROWS = 4, N = COLS * ROWS, MAX = 8;
+  const cells = [];
+  for (let k = 0; k < N; k++) { const b = document.createElement('b'); gridEl.appendChild(b); cells.push(b); }
+  for (let r = 1; r < ROWS; r++) for (let q = 1; q < COLS; q++) {
+    const d = document.createElement('i');
+    d.style.left = (q / COLS * 100) + '%';
+    d.style.top = (r / ROWS * 100) + '%';
+    gridEl.appendChild(d);
+  }
+  const on = new Set();
+  const flip = (k) => { cells[k].classList.add('f'); on.add(k); };
+  while (on.size < 6) flip(Math.floor(Math.random() * N));
+  if (!reduced) {
+    setInterval(() => {
+      if (document.hidden) return;
+      const list = [...on];
+      const off = list[Math.floor(Math.random() * list.length)];
+      cells[off].classList.remove('f'); on.delete(off);
+      let k;
+      do { k = Math.floor(Math.random() * N); } while (on.has(k) || k === off);
+      flip(k);
+      if (on.size < MAX && Math.random() < 0.3) { let m; do { m = Math.floor(Math.random() * N); } while (on.has(m)); flip(m); }
+    }, 1400);
+  }
+}
+
 /* mouse: video drifts, art and text shift on different planes for depth */
 let tx = 0, ty = 0, cx = 0, cy = 0;
 if (!reduced) {
