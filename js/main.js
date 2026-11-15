@@ -75,7 +75,7 @@ async function start() {
   /* ---------- renderer ---------- */
   const NIGHT = new THREE.Color('#000000');
   const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
-  const PR = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 1.75);
+  let PR = Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 1.25);
   renderer.setPixelRatio(PR);
   renderer.setSize(innerWidth, innerHeight);
   renderer.setClearColor(NIGHT, 1);
@@ -332,8 +332,8 @@ async function start() {
     blending: THREE.AdditiveBlending,
   });
 
-  const flowerGeo = buildFlowers(isMobile ? 10000 : 24000);
-  const leafGeo = buildLeaves(isMobile ? 9000 : 18000);
+  const flowerGeo = buildFlowers(isMobile ? 7000 : 15000);
+  const leafGeo = buildLeaves(isMobile ? 5000 : 10000);
   const spriteFlowers = new THREE.Points(flowerGeo, spriteMat);
   const spriteLeaves = new THREE.Points(leafGeo, spriteMat);
   const halo = new THREE.Points(flowerGeo, haloMat);
@@ -362,14 +362,14 @@ async function start() {
         k *= uTilt;
         if (k > 0.0004) {
           vec3 acc = vec3(0.0);
-          for (int i = 0; i < 20; i++) {
+          for (int i = 0; i < 10; i++) {
             float a = float(i) * 2.39996;
-            float r = sqrt((float(i) + 0.5) / 20.0);
+            float r = sqrt((float(i) + 0.5) / 10.0);
             vec2 off = vec2(cos(a), sin(a)) * r * k;
             off.x /= uAspect;
             acc += texture2D(tDiffuse, vUv + off).rgb;
           }
-          c = mix(c, acc / 20.0, smoothstep(0.0, 0.004, k));
+          c = mix(c, acc / 10.0, smoothstep(0.0, 0.004, k));
         }
         c += (h(vUv * vec2(1920.0, 1080.0)) - 0.5) * 0.01;
         float d = distance(vUv, vec2(0.5));
@@ -382,7 +382,7 @@ async function start() {
   // multisampled target: gives alpha-to-coverage something to smooth the sprite edges with
   const msaaTarget = new THREE.WebGLRenderTarget(innerWidth * PR, innerHeight * PR, {
     type: THREE.HalfFloatType,
-    samples: isMobile ? 2 : 4,
+    samples: 2,
   });
   const composer = new EffectComposer(renderer, msaaTarget);
   composer.setPixelRatio(PR);
@@ -435,6 +435,13 @@ async function start() {
   let tCur = 0;
   let speedSm = 0;
   let frames = 0;
+  let frameMs = 16;
+  let hud = null;
+  if (location.search.includes('debug')) {
+    hud = document.createElement('div');
+    hud.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:20;font:12px monospace;color:#CBA052';
+    document.body.appendChild(hud);
+  }
 
   function frame() {
     requestAnimationFrame(frame);
@@ -470,6 +477,15 @@ async function start() {
     fx.uniforms.uVig.value = Math.min(1, speedSm * 6) + disperse * 0.4;
 
     composer.render();
+
+    // adaptive resolution: if frames are slow, drop the pixel ratio a step instead of stuttering
+    frameMs += (dt * 1000 - frameMs) * 0.05;
+    if (hud) hud.textContent = Math.round(1000 / Math.max(frameMs, 1)) + ' fps  PR ' + PR.toFixed(2);
+    if (frames > 90 && frames % 45 === 0 && frameMs > 26 && PR > 0.7) {
+      PR = Math.max(0.7, PR - 0.2);
+      onResize();
+      frameMs = 16;
+    }
 
     if (++frames === 3) loader.classList.add('gone');
     if (frames === 20) document.body.classList.add('ready');
