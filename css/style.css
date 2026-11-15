@@ -159,7 +159,7 @@ body.ready .cap,body.ready .go{opacity:1}
 .btn:hover{background-size:100% 100%;color:#151510}
 
 /* about: quiet, offset, sits right after the story */
-.about{padding:8vh var(--gutter) 14vh}
+.about{padding:6vh var(--gutter) 10vh}
 .about-in{max-width:1100px;margin:0 auto}
 .ab-title{font-size:clamp(26px,3vw,44px);line-height:1.1;letter-spacing:-.005em}
 .ab-name{font-family:var(--serif);font-weight:300;font-size:clamp(19px,2vw,29px);line-height:1.4;max-width:21em;margin:clamp(28px,6vh,60px) 0 0 clamp(0px,16%,180px);color:var(--soft)}
