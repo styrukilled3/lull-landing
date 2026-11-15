@@ -3,7 +3,7 @@
   --gold:#CBA052;
   --wood:#8B6425;
   --white:#FFFFFF;
-  --ink:#0b2214;
+  --ink:#020302;
   --u:clamp(1px,calc(100vw/1600),1.25px);
 }
 *{box-sizing:border-box;margin:0;padding:0}
