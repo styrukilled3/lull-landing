@@ -142,13 +142,13 @@ function start() {
       type[i] = isLeaf ? 1 : 0;
       if (isLeaf) {
         tmp.copy(cLeafA).lerp(cLeafB, Math.random());
-        size[i] = 1.2 + Math.random() * 1.4;
+        size[i] = 0.9 + Math.random() * 1.2;
       } else {
         const r = Math.random();
         if (r < 0.62) tmp.copy(cGold);
         else if (r < 0.84) tmp.copy(cGold).lerp(cWhite, 0.55);
         else tmp.copy(cWood).lerp(cGold, 0.3);
-        size[i] = 0.55 + Math.random() * 0.75;
+        size[i] = 0.3 + Math.random() * 0.45;
       }
       col.set([tmp.r, tmp.g, tmp.b], i * 3);
     }
@@ -208,10 +208,12 @@ function start() {
       float grow = leaf ? smoothstep(260.0, 70.0, dist) : smoothstep(95.0, 16.0, dist);
       float sz = aSize * (leaf ? (0.35 + 0.65 * grow) : (0.18 + 0.82 * grow));
       sz *= mix(1.0, 0.55, uDisperse);
-      gl_PointSize = clamp(sz * uScale / max(dist, 0.1), 0.0, 140.0);
+      gl_PointSize = clamp(sz * uScale / max(dist, 0.1), 0.0, leaf ? 56.0 : 72.0);
 
       float nearFade = smoothstep(0.6, 3.0, dist);
-      float farFade = leaf ? 0.55 * (1.0 - smoothstep(180.0, 300.0, dist)) : 1.0 - smoothstep(120.0, 260.0, dist);
+      float farFade = leaf
+        ? 0.5 * (1.0 - smoothstep(120.0, 280.0, dist))
+        : 0.8 * (1.0 - smoothstep(40.0, 170.0, dist)) * (0.25 + 0.75 * grow);
       vAlpha = nearFade * farFade * uReveal * (1.0 + uDisperse * 0.5);
       vColor = aColor;
       vType = aType;
@@ -235,18 +237,13 @@ function start() {
       gl_FragColor = vec4(col, alpha);
     }
   `;
-  const mat = new THREE.ShaderMaterial({
-    uniforms,
-    vertexShader: vert,
-    fragmentShader: frag,
-    transparent: true,
-    depthWrite: false,
-    depthTest: false,
-    blending: THREE.AdditiveBlending,
-  });
+  const matBase = { uniforms, vertexShader: vert, fragmentShader: frag, transparent: true, depthWrite: false, depthTest: false };
+  // flowers add light, leaves are painted over the sky so they cannot pile up into white
+  const matFlower = new THREE.ShaderMaterial({ ...matBase, blending: THREE.AdditiveBlending });
+  const matLeaf = new THREE.ShaderMaterial({ ...matBase, blending: THREE.NormalBlending });
 
-  const flowers = new THREE.Points(buildPoints(isMobile ? 5500 : 11000, false), mat);
-  const leaves = new THREE.Points(buildPoints(isMobile ? 4500 : 9000, true), mat);
+  const flowers = new THREE.Points(buildPoints(isMobile ? 5500 : 11000, false), matFlower);
+  const leaves = new THREE.Points(buildPoints(isMobile ? 4500 : 9000, true), matLeaf);
   flowers.frustumCulled = false;
   leaves.frustumCulled = false;
   scene.add(leaves, flowers);
@@ -294,7 +291,8 @@ function start() {
     map: new THREE.CanvasTexture(mc), blending: THREE.AdditiveBlending,
     depthWrite: false, depthTest: false, transparent: true, fog: false,
   }));
-  moon.scale.set(110, 110, 1);
+  moon.material.opacity = 0.75;
+  moon.scale.set(80, 80, 1);
   moon.renderOrder = -1;
   scene.add(moon);
 
@@ -322,7 +320,7 @@ function start() {
   composer.setPixelRatio(PR);
   composer.setSize(innerWidth, innerHeight);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), isMobile ? 0.7 : 0.95, 0.65, 0.12);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), isMobile ? 0.45 : 0.55, 0.5, 0.4);
   composer.addPass(bloom);
   const fx = new ShaderPass(FxShader);
   composer.addPass(fx);
@@ -390,7 +388,7 @@ function start() {
     camera.position.copy(pos);
     if (!reduced) camera.position.y += Math.sin(time * 0.7) * 0.05;
     const look = curve.getPointAt(Math.min(tCur + 0.025, 1));
-    look.y -= 0.2;
+    look.y -= 2.6;
     camera.lookAt(look);
     const off = reduced || mouse.x > 2;
     tilt.lerp(off ? new THREE.Vector2(0, 0) : mouse, Math.min(1, dt * 3));

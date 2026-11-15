@@ -39,6 +39,7 @@ body.no-gl #valley{background:radial-gradient(120% 90% at 50% 100%,#1c4a2b 0%,va
 .pill:hover{transform:translateY(-1px)}
 
 main{position:relative;z-index:2}
+h1,.cap{text-shadow:0 2px 32px rgba(5,18,10,.55)}
 section{position:relative}
 .wrap{width:min(1100px,calc(100% - 40px));margin:0 auto}
 .narrow{width:min(640px,calc(100% - 40px))}
