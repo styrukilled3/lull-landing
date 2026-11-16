@@ -72,6 +72,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .steps-pin::before{width:42vw;height:42vw;left:-8vw;top:8%;background:rgba(80,140,95,.30)}
 .steps-pin::after{width:36vw;height:36vw;right:-6vw;bottom:-6%;background:rgba(80,140,95,.34);animation-delay:-8s}
 .steps-pin>*{position:relative;z-index:1}
+.steps-pin>.steps-bg{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;opacity:.08;pointer-events:none}
 @keyframes orb{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(6vw,-4vh,0) scale(1.18)}}
 .steps-pin{position:sticky;overflow:hidden;top:var(--nav);height:calc(100vh - var(--nav));height:calc(100svh - var(--nav));display:flex;flex-direction:column;justify-content:center;gap:clamp(30px,6vh,56px);padding:0 var(--pad)}
 .steps h2{font-family:var(--head);font-weight:300;font-size:clamp(20px,2.8vw,40px);line-height:1.15;text-align:center;color:var(--gold)}
@@ -214,7 +215,7 @@ body.no-scroll{overflow:hidden}
     .grid{gap:20px 14px}
 }
 @media (prefers-reduced-motion:reduce){
-  .hero-bg{display:none}
+  .hero-bg,.steps-bg{display:none}
   html{scroll-behavior:auto}
   *{transition:none!important;animation:none!important}
   .rv,.rv-img{opacity:1;filter:none;transform:none;clip-path:none}

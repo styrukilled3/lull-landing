@@ -349,3 +349,12 @@ $('f-add').addEventListener('click', (e) => { if (PRODUCTS[cur] && PRODUCTS[cur]
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
   frame();
 })();
+
+/* video nền khối nghi thức: chỉ phát khi đang nằm trong màn hình */
+(function () {
+  const v = document.querySelector('.steps-bg');
+  if (!v || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  new IntersectionObserver((es) => {
+    es.forEach((en) => { if (en.isIntersecting) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause(); });
+  }, { threshold: 0.05 }).observe($('ritual'));
+})();
