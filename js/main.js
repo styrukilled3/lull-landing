@@ -19,7 +19,7 @@ const PRODUCTS = {
   },
   set: {
     name: 'lull Ritual Set', price: 299000, old: 327000, no: 'Trọn bộ / Ritual Set', title: 'lull Ritual Set', tag: 'Off The World, On Yourself.',
-    img: 'assets/img/set.jpg', imgs: ['assets/img/set.jpg', 'assets/img/box-set.jpg'], alt: 'Bộ lull Ritual: túi thơm, kem dưỡng mắt và thanh lăn',
+    img: 'assets/img/set.jpg', alt: 'Bộ lull Ritual: túi thơm, kem dưỡng mắt và thanh lăn',
     desc: 'Combo trọn nghi thức lull Ritual 3 bước, cho trải nghiệm thư giãn đa giác quan.',
     facts: ['1 Túi thơm Mind Off + 1 Kem dưỡng mắt Eyes Off + 1 Thanh lăn Slow Off', 'Mã QR nghe playlist độc quyền (432 Hz) và bài tập thở'],
     save: 'Tiết kiệm 28.000đ so với mua lẻ.',
