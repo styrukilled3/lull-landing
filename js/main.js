@@ -306,8 +306,9 @@ $('f-add').addEventListener('click', (e) => { if (PRODUCTS[cur] && PRODUCTS[cur]
   const T = [0, 0.25, 0.3, 0.58, 0.63]; // step1, mũi tên 1, step2, mũi tên 2, step3
   function update() {
     const r = sec.getBoundingClientRect();
-    const span = r.height - innerHeight + 64;
-    const p = Math.min(1, Math.max(0, (64 - r.top) / span));
+    const nav = $('ritual').previousElementSibling ? 48 : 48;
+    const span = r.height - innerHeight + nav;
+    const p = Math.min(1, Math.max(0, (nav - r.top) / span));
     steps[0].classList.toggle('on', p >= T[0] && r.top < innerHeight * 0.6);
     arrs[0].classList.toggle('on', p > T[1]);
     steps[1].classList.toggle('on', p > T[2]);
@@ -317,4 +318,34 @@ $('f-add').addEventListener('click', (e) => { if (PRODUCTS[cur] && PRODUCTS[cur]
   addEventListener('scroll', update, { passive: true });
   addEventListener('resize', update);
   update();
+})();
+
+/* reveal khi cuộn + nav + parallax hero */
+(function () {
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els = document.querySelectorAll('.rv, .rv-img');
+  if (still || !('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in')); }
+  else {
+    const io = new IntersectionObserver((es) => {
+      es.forEach((en) => {
+        if (!en.isIntersecting) return;
+        en.target.classList.add('in');
+        en.target.querySelectorAll('.rv-img').forEach((i) => i.classList.add('in'));
+        io.unobserve(en.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    els.forEach((e) => io.observe(e.classList.contains('rv-img') ? e.parentElement : e));
+  }
+  const bar = document.querySelector('.bar');
+  const vid = document.querySelector('.hero-bg');
+  const hero = document.querySelector('.hero');
+  let ticking = false;
+  function frame() {
+    ticking = false;
+    const y = scrollY;
+    bar.classList.toggle('scrolled', y > 8);
+    if (vid && !still && y < hero.offsetHeight + 80) vid.style.transform = 'translate3d(0,' + (y * 0.18).toFixed(1) + 'px,0)';
+  }
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }, { passive: true });
+  frame();
 })();

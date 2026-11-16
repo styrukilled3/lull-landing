@@ -7,12 +7,12 @@
 <meta name="description" content="lull Ritual: nghi thức 3 bước chăm sóc giấc ngủ gồm túi thơm thảo mộc, kem dưỡng mắt và thanh lăn mát xa mặt.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Noto+Serif:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=14">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=17">
 </head>
 <body>
 
-<header class="bar">
+<header class="bar nav-in">
   <a class="bar-item brand" href="#top">lull</a>
   <a class="bar-item" href="#shop">Sản phẩm</a>
   <a class="bar-item" href="#ritual">Nghi thức</a>
@@ -37,7 +37,7 @@
   <!-- 2. nghi thức 3 bước: ghim lại, cuộn tới đâu sáng tới đó -->
   <section class="steps" id="ritual" aria-labelledby="st-title">
     <div class="steps-pin">
-      <h2 id="st-title">Nghi thức ngủ lull: 3 bước để nghỉ</h2>
+      <h2 id="st-title" class="rv">Nghi thức ngủ lull: 3 bước để nghỉ</h2>
       <div class="st-row">
         <article class="step" data-step="0">
           <span class="st-num" aria-hidden="true">1</span>
@@ -66,55 +66,55 @@
   <!-- 3. sản phẩm -->
   <section class="spread">
     <div class="shop" id="shop">
-      <h2 class="head">【 LULL RITUAL 】</h2>
+      <h2 class="head rv">【 LULL RITUAL 】</h2>
       <ul class="grid">
-        <li class="card" id="p-mind">
+        <li class="card rv" id="p-mind" style="--d:0">
           <p class="no">01<br>Mind Off</p>
-          <span class="slot card-img" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/mind.jpg" alt="Túi thơm Mind Off màu xanh rêu, thêu logo lull vàng" loading="lazy" decoding="async"></span>
+          <span class="slot rv-img card-img" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/mind.jpg" alt="Túi thơm Mind Off màu xanh rêu, thêu logo lull vàng" loading="lazy" decoding="async"></span>
           <h3>Túi thơm thảo mộc</h3>
           <p class="meta">Vỏ sen, trần bì, hoa cúc. 50g.</p>
           <p class="price">59.000đ</p>
           <button class="add" type="button" data-id="mind">Thêm vào giỏ</button>
         </li>
-        <li class="card" id="p-eyes">
+        <li class="card rv" id="p-eyes" style="--d:1">
           <p class="no">02<br>Eyes Off</p>
-          <span class="slot card-img" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/eyes.jpg" alt="Hũ kem dưỡng mắt Eyes Off nắp vàng" loading="lazy" decoding="async"></span>
+          <span class="slot rv-img card-img" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/eyes.jpg" alt="Hũ kem dưỡng mắt Eyes Off nắp vàng" loading="lazy" decoding="async"></span>
           <h3>Kem dưỡng mắt</h3>
           <p class="meta">Rau má, trà xanh, hoa cúc. 15g.</p>
           <p class="price">159.000đ</p>
           <button class="add" type="button" data-id="eyes">Thêm vào giỏ</button>
         </li>
-        <li class="card" id="p-slow">
+        <li class="card rv" id="p-slow" style="--d:2">
           <p class="no">03<br>Slow Off</p>
-          <span class="slot card-img" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/slow.jpg" alt="Thanh lăn mát xa mặt Slow Off đầu đá xanh" loading="lazy" decoding="async"></span>
+          <span class="slot rv-img card-img" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/slow.jpg" alt="Thanh lăn mát xa mặt Slow Off đầu đá xanh" loading="lazy" decoding="async"></span>
           <h3>Thanh lăn mát xa mặt</h3>
           <p class="meta">Đầu lăn thép không gỉ 304, thân nhựa ABS kháng khuẩn.</p>
           <p class="price">109.000đ</p>
           <button class="add" type="button" data-id="slow">Thêm vào giỏ</button>
         </li>
-        <li class="card card-mask" id="p-mask">
+        <li class="card card-mask rv" id="p-mask" style="--d:0">
           <p class="no">Sleep Mask<br>The Last Light</p>
-          <span class="slot card-img fill" style="--bg:url(../assets/img/mask.jpg)" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/mask.jpg" alt="Bịt mắt ngủ lull màu xanh đậm, thêu logo vàng" loading="lazy" decoding="async"></span>
+          <span class="slot rv-img card-img fill" style="--bg:url(../assets/img/mask.jpg)" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/mask.jpg" alt="Bịt mắt ngủ lull màu xanh đậm, thêu logo vàng" loading="lazy" decoding="async"></span>
           <h3>Bịt mắt ngủ</h3>
           <p class="meta">Bước cuối cùng trước khi ngủ.</p>
           <p class="price">Liên hệ</p>
           <button class="add" type="button" data-id="mask" disabled>Liên hệ để đặt</button>
         </li>
-        <li class="card card-set" id="p-set">
+        <li class="card card-set rv" id="p-set" style="--d:1">
           <p class="no">Trọn bộ<br>Ritual Set</p>
-          <span class="slot card-img fill" style="--bg:url(../assets/img/set.jpg)" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/set.jpg" alt="Bộ lull Ritual: túi thơm, kem dưỡng mắt và thanh lăn" loading="lazy" decoding="async"></span>
+          <span class="slot rv-img card-img fill" style="--bg:url(../assets/img/set.jpg)" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/set.jpg" alt="Bộ lull Ritual: túi thơm, kem dưỡng mắt và thanh lăn" loading="lazy" decoding="async"></span>
           <h3>lull Ritual Set</h3>
           <p class="meta">Combo 3 bước, kèm mã QR playlist 432 Hz và bài tập thở.</p>
           <p class="price"><s>327.000đ</s> 299.000đ</p>
           <button class="add" type="button" data-id="set">Thêm vào giỏ</button>
         </li>
       </ul>
-      <p class="save">Mua trọn bộ tiết kiệm 28.000đ so với mua lẻ.</p>
+      <p class="save rv">Mua trọn bộ tiết kiệm 28.000đ so với mua lẻ.</p>
     </div>
   </section>
 </main>
 
-<footer class="foot">
+<footer class="foot rv">
   <span>lull</span>
   <span>Off the world, on yourself.</span>
   <span>Sleep Care</span>
@@ -161,6 +161,6 @@
   </div>
 </aside>
 
-<script src="js/main.js?v=14"></script>
+<script src="js/main.js?v=17"></script>
 </body>
 </html>
