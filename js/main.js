@@ -1,25 +1,25 @@
 const PRODUCTS = {
   mind: {
     name: 'Túi thơm thảo mộc Mind Off', price: 59000, no: '01 / Mind Off', title: 'Túi thơm thảo mộc', tag: 'Signal to Rest',
-    img: 'assets/img/mind.jpg', alt: 'Túi thơm Mind Off màu xanh rêu, thêu logo lull vàng',
+    img: 'assets/img/mind.jpg', imgs: ['assets/img/mind.jpg', 'assets/img/box-mind.jpg'], alt: 'Túi thơm Mind Off màu xanh rêu, thêu logo lull vàng',
     desc: 'Điểm khởi động của nghi thức: dùng hương thơm làm tín hiệu báo thời điểm kết thúc công việc và bắt đầu nghỉ ngơi.',
     facts: ['Thành phần: vỏ sen khô 40% (20g), trần bì 35% (17,5g), hoa cúc khô 25% (12,5g)', 'Khối lượng: 50g', 'Túi cotton, kèm mã QR nghe nhạc thư giãn'],
   },
   eyes: {
     name: 'Kem dưỡng mắt Eyes Off', price: 159000, no: '02 / Eyes Off', title: 'Kem dưỡng mắt', tag: 'Slow Down Your Eyes',
-    img: 'assets/img/eyes.jpg', alt: 'Hũ kem dưỡng mắt Eyes Off nắp vàng',
+    img: 'assets/img/eyes.jpg', imgs: ['assets/img/eyes.jpg', 'assets/img/box-eyes.jpg'], alt: 'Hũ kem dưỡng mắt Eyes Off nắp vàng',
     desc: 'Chăm sóc vùng da quanh mắt sau một ngày nhìn màn hình: tạm ngừng nhìn ra bên ngoài để quay về với bản thân.',
     facts: ['Thành phần: nước tinh khiết, glycerin, dầu hạt hướng dương, vitamin B5 (panthenol), chiết xuất rau má, trà xanh, hoa cúc, sodium hyaluronate', 'Khối lượng: 15g'],
   },
   slow: {
     name: 'Thanh lăn mát xa mặt Slow Off', price: 109000, no: '03 / Slow Off', title: 'Thanh lăn mát xa mặt', tag: 'Let Go',
-    img: 'assets/img/slow.jpg', alt: 'Thanh lăn mát xa mặt Slow Off đầu đá xanh',
+    img: 'assets/img/slow.jpg', imgs: ['assets/img/slow.jpg', 'assets/img/box-slow.jpg'], alt: 'Thanh lăn mát xa mặt Slow Off đầu đá xanh',
     desc: 'Khép lại nghi thức: massage nhẹ nhàng giúp giải tỏa căng cơ mặt và đưa cơ thể vào trạng thái ngủ sâu.',
     facts: ['Đầu lăn thép không gỉ 304 (70%), thân cầm nhựa kháng khuẩn ABS (30%)', 'Hộp giấy cứng nắp bật, khay định hình, logo ép kim vàng'],
   },
   set: {
     name: 'lull Ritual Set', price: 299000, old: 327000, no: 'Trọn bộ / Ritual Set', title: 'lull Ritual Set', tag: 'Off The World, On Yourself.',
-    img: 'assets/img/set.jpg', alt: 'Bộ lull Ritual: túi thơm, kem dưỡng mắt và thanh lăn',
+    img: 'assets/img/set.jpg', imgs: ['assets/img/set.jpg', 'assets/img/box-set.jpg'], alt: 'Bộ lull Ritual: túi thơm, kem dưỡng mắt và thanh lăn',
     desc: 'Combo trọn nghi thức lull Ritual 3 bước, cho trải nghiệm thư giãn đa giác quan.',
     facts: ['1 Túi thơm Mind Off + 1 Kem dưỡng mắt Eyes Off + 1 Thanh lăn Slow Off', 'Mã QR nghe playlist độc quyền (432 Hz) và bài tập thở'],
     save: 'Tiết kiệm 28.000đ so với mua lẻ.',
