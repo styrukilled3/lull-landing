@@ -3,183 +3,119 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>lull — Off The World, On Yourself</title>
-<meta name="description" content="lull Ritual: nghi thức 3 bước chăm sóc giấc ngủ. Tạm gác thế giới ngoài kia, quay về chăm sóc chính mình.">
-<meta name="theme-color" content="#050604">
+<title>lull | Sleep Care, Off The World, On Yourself.</title>
+<meta name="description" content="lull Ritual: nghi thức 3 bước chăm sóc giấc ngủ gồm túi thơm thảo mộc, kem dưỡng mắt và thanh lăn mát xa mặt.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@200;300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=28">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Noto+Serif:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=1">
 </head>
 <body>
-<div class="grid" id="grid" aria-hidden="true"></div>
 
-<div class="bg" id="bg" aria-hidden="true">
-  <video id="bgv" class="bgv" muted playsinline loop autoplay preload="auto" poster="assets/video/poster.jpg">
-    <source src="assets/video/hero.mp4" type="video/mp4">
-  </video>
-  <div class="shade" id="shade"></div>
-</div>
-
-<header class="top" id="top-bar">
-  <a class="logo" href="#top" aria-label="lull">lull</a>
-  <nav aria-label="Main">
-    <a href="#about">Về lull</a>
-    <a href="#story">Câu chuyện</a>
-    <a href="#ritual">Nghi thức</a>
-    <a class="pill" href="#set">Ritual Set</a>
-  </nav>
+<header class="bar">
+  <a class="bar-item brand" href="#top">lull</a>
+  <a class="bar-item" href="#shop">Sản phẩm</a>
+  <a class="bar-item" href="#about">Về lull</a>
+  <button class="bar-item cart-open" id="cart-open" type="button">Giỏ hàng <span id="cart-count">0</span></button>
 </header>
 
 <main id="top">
-  <section class="hero screen" data-id="top" data-blur="0" data-dim="0">
-    <h1>
-      <span class="hl l1" style="--d:.35s"><span>Off the world,</span></span>
-      <span class="hl l2" style="--d:1.2s"><span>on yourself.</span></span>
-    </h1>
-    <p class="hero-sub"><span>Tạm gác thế giới ngoài kia</span><span>Quay về chăm sóc chính mình</span></p>
-    <a class="go" href="#about" id="go" aria-label="Khám phá lull">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg>
-    </a>
-    <p class="hero-note">Nghi thức 3 bước chăm sóc giấc ngủ</p>
+  <!-- 1. mở đầu: hàng sản phẩm + tấm lớn bên phải -->
+  <section class="hero">
+    <div class="hero-left">
+      <p class="hero-tag">Off The World, On Yourself.</p>
+      <ul class="line" aria-label="Sản phẩm lull">
+        <li><a href="#p-mind"><span class="slot tall" role="img" aria-label="Ảnh túi thơm Mind Off"><i>Ảnh túi thơm</i></span><b>Mind Off</b><small>59.000đ</small></a></li>
+        <li><a href="#p-eyes"><span class="slot tall" role="img" aria-label="Ảnh kem dưỡng mắt Eyes Off"><i>Ảnh kem dưỡng mắt</i></span><b>Eyes Off</b><small>159.000đ</small></a></li>
+        <li><a href="#p-slow"><span class="slot tall" role="img" aria-label="Ảnh thanh lăn Slow Off"><i>Ảnh thanh lăn</i></span><b>Slow Off</b><small>109.000đ</small></a></li>
+        <li><a href="#p-set"><span class="slot tall" role="img" aria-label="Ảnh lull Ritual Set"><i>Ảnh bộ Ritual</i></span><b>Ritual Set</b><small>299.000đ</small></a></li>
+      </ul>
+    </div>
+    <aside class="hero-panel">
+      <h1>LULL</h1>
+      <a class="frame" href="#p-mind"><span class="slot" role="img" aria-label="Ảnh bước 1"><i>Bước 1 · Mind Off</i></span></a>
+      <a class="frame" href="#p-eyes"><span class="slot" role="img" aria-label="Ảnh bước 2"><i>Bước 2 · Eyes Off</i></span></a>
+      <a class="frame" href="#p-slow"><span class="slot" role="img" aria-label="Ảnh bước 3"><i>Bước 3 · Slow Off</i></span></a>
+    </aside>
   </section>
 
-  <section class="about screen" id="about" data-id="about" data-blur="9" data-dim=".3">
-    <div class="about-in">
-      <h2 class="ab-head" style="--i:0">
-        <span class="ab-l1">Lắng dịu,<i class="sm sm-t">lull lấy cảm hứng từ lullaby, bài hát ru</i></span>
-        <span class="ab-l2"><i class="sm sm-b">sau những bộn bề</i>chậm lại.</span>
-      </h2>
-      <div class="ab-pair">
-        <div class="ab-item ab-v" style="--i:1">
-          <h3>Tầm nhìn</h3>
-          <p>Trở thành người nhà của mọi nhà: thương hiệu Sleep Care quen thuộc và đáng tin cậy trong những khoảnh khắc nghỉ ngơi của mỗi gia đình.</p>
-        </div>
-        <div class="ab-item ab-m" style="--i:2">
-          <h3>Sứ mệnh</h3>
-          <p>Mang sự nghỉ ngơi đến gần hơn với mọi người qua các sản phẩm và trải nghiệm chăm sóc giấc ngủ được thiết kế tinh tế, thấu hiểu.</p>
-        </div>
+  <!-- 2. giới thiệu + sản phẩm -->
+  <section class="spread" id="about">
+    <div class="about">
+      <h2 class="big">LULL</h2>
+      <p class="lead">Kết thúc một ngày dài không có nghĩa là tâm trí đã thực sự được nghỉ ngơi. lull tạo ra khoảng lặng đó: nơi bạn đặt bộn bề sang một bên, thả lỏng, và để giấc ngủ bắt đầu bằng sự bình yên thực sự.</p>
+      <div class="about-art">
+        <span class="slot tall" role="img" aria-label="Ảnh không gian lull"><i>Ảnh không gian lull</i></span>
+        <p class="about-note n1">Về lull<br>-<br>Sleep Care</p>
+        <p class="about-note n2">Nghi thức 3 bước.</p>
       </div>
     </div>
-  </section>
 
-  <section class="story screen" id="story" data-id="story" data-blur="13" data-dim=".36">
-    <div class="scrubs" id="scrub">
-      <p class="sl sl-1">Kết thúc một ngày dài không có nghĩa là tâm trí đã thực sự được nghỉ ngơi.</p>
-      <p class="sl sl-2">Nhiều người vẫn mang căng thẳng lên giường.</p>
-      <p class="sl sl-3">lull tạo ra khoảng lặng đó: nơi bạn đặt bộn bề sang một bên, thả lỏng, và để giấc ngủ bắt đầu bằng sự bình yên thực sự.</p>
+    <div class="shop" id="shop">
+      <h2 class="head">【 LULL RITUAL 】</h2>
+      <ul class="grid">
+        <li class="card" id="p-mind">
+          <p class="no">01<br>Mind Off</p>
+          <span class="slot card-img" role="img" aria-label="Ảnh túi thơm thảo mộc"><i>Ảnh túi thơm</i></span>
+          <h3>Túi thơm thảo mộc</h3>
+          <p class="meta">Vỏ sen, trần bì, hoa cúc. 50g.</p>
+          <p class="price">59.000đ</p>
+          <button class="add" type="button" data-id="mind">Thêm vào giỏ</button>
+        </li>
+        <li class="card" id="p-eyes">
+          <p class="no">02<br>Eyes Off</p>
+          <span class="slot card-img" role="img" aria-label="Ảnh kem dưỡng mắt"><i>Ảnh kem dưỡng mắt</i></span>
+          <h3>Kem dưỡng mắt</h3>
+          <p class="meta">Rau má, trà xanh, hoa cúc. 15g.</p>
+          <p class="price">159.000đ</p>
+          <button class="add" type="button" data-id="eyes">Thêm vào giỏ</button>
+        </li>
+        <li class="card" id="p-slow">
+          <p class="no">03<br>Slow Off</p>
+          <span class="slot card-img" role="img" aria-label="Ảnh thanh lăn mát xa mặt"><i>Ảnh thanh lăn</i></span>
+          <h3>Thanh lăn mát xa mặt</h3>
+          <p class="meta">Đầu lăn thép không gỉ 304.</p>
+          <p class="price">109.000đ</p>
+          <button class="add" type="button" data-id="slow">Thêm vào giỏ</button>
+        </li>
+        <li class="card card-set" id="p-set">
+          <p class="no">Trọn bộ<br>Ritual Set</p>
+          <span class="slot card-img" role="img" aria-label="Ảnh lull Ritual Set"><i>Ảnh bộ Ritual</i></span>
+          <h3>lull Ritual Set</h3>
+          <p class="meta">3 sản phẩm, kèm mã QR playlist 432 Hz và bài tập thở.</p>
+          <p class="price"><s>327.000đ</s> 299.000đ</p>
+          <button class="add" type="button" data-id="set">Thêm vào giỏ</button>
+        </li>
+      </ul>
+      <p class="save">Mua trọn bộ tiết kiệm 28.000đ so với mua lẻ.</p>
     </div>
   </section>
-
-
-
-  <section class="screen rs" id="ritual" data-id="mind" data-blur="14" data-dim=".4">
-    <article class="chap" data-n="01">
-      <div class="art" aria-hidden="true">
-        <svg viewBox="0 0 120 120">
-          <path pathLength="1" d="M44 38c0-8 6-14 16-14s16 6 16 14"/>
-          <path pathLength="1" d="M30 44h60l-6 56a8 8 0 0 1-8 7H44a8 8 0 0 1-8-7Z"/>
-          <path pathLength="1" d="M52 66c6-8 14-8 16 0-4 8-12 10-16 0ZM60 74v14"/>
-        </svg>
-      </div>
-      <div class="txt">
-        <p class="num" style="--i:0">01</p>
-        <p class="step" style="--i:1">Mind Off</p>
-        <h2 style="--i:2">Túi thơm<i class="sm">thảo mộc</i></h2>
-        <p class="body" style="--i:3">Điểm khởi động. Hương thơm là tín hiệu báo rằng công việc đã khép lại và giờ nghỉ ngơi bắt đầu.</p>
-        <dl class="facts" style="--i:4">
-          <div><dt>Thành phần</dt><dd>Vỏ sen 40%, trần bì 35%, hoa cúc 25%</dd></div>
-          <div><dt>Quy cách</dt><dd>Túi cotton 50g, kèm mã QR nghe nhạc</dd></div>
-        </dl>
-        <p class="price" style="--i:5"><span class="count" data-to="59000">59.000</span>đ <small>/ 50g</small></p>
-      </div>
-    </article>
-  </section>
-
-  <section class="screen rs" id="eyes" data-id="eyes" data-blur="14" data-dim=".4">
-    <article class="chap flip" data-n="02">
-      <div class="art" aria-hidden="true">
-        <svg viewBox="0 0 120 120">
-          <rect pathLength="1" x="46" y="12" width="28" height="20" rx="4"/>
-          <path pathLength="1" d="M42 32h36l-4 70a6 6 0 0 1-6 6H52a6 6 0 0 1-6-6Z"/>
-          <path pathLength="1" d="M52 56h16M52 68h16"/>
-        </svg>
-      </div>
-      <div class="txt">
-        <p class="num" style="--i:0">02</p>
-        <p class="step" style="--i:1">Eyes Off</p>
-        <h2 style="--i:2"><i class="sm sm-b">Kem</i>dưỡng mắt</h2>
-        <p class="body" style="--i:3">Chăm sóc vùng da quanh mắt sau một ngày dài trước màn hình. Tạm ngừng nhìn ra bên ngoài để quay về với bản thân.</p>
-        <dl class="facts" style="--i:4">
-          <div><dt>Thành phần</dt><dd>Panthenol, rau má, trà xanh, hoa cúc, Sodium Hyaluronate</dd></div>
-          <div><dt>Quy cách</dt><dd>Tuýp 15g</dd></div>
-        </dl>
-        <p class="price" style="--i:5"><span class="count" data-to="159000">159.000</span>đ <small>/ 15g</small></p>
-      </div>
-    </article>
-  </section>
-
-  <section class="screen rs" id="slow" data-id="slow" data-blur="14" data-dim=".4">
-    <article class="chap" data-n="03">
-      <div class="art" aria-hidden="true">
-        <svg viewBox="0 0 120 120">
-          <circle pathLength="1" cx="60" cy="30" r="16"/>
-          <path pathLength="1" d="M60 46v14M52 60h16v12H52ZM56 72v36h8V72"/>
-        </svg>
-      </div>
-      <div class="txt">
-        <p class="num" style="--i:0">03</p>
-        <p class="step" style="--i:1">Slow Off</p>
-        <h2 style="--i:2">Thanh lăn<i class="sm">mát xa mặt</i></h2>
-        <p class="body" style="--i:3">Khép lại nghi thức. Massage nhẹ giúp giải tỏa căng cơ mặt và đưa cơ thể vào trạng thái ngủ sâu.</p>
-        <dl class="facts" style="--i:4">
-          <div><dt>Chất liệu</dt><dd>Đầu lăn inox 304, thân nhựa kháng khuẩn ABS</dd></div>
-          <div><dt>Đóng gói</dt><dd>Hộp cứng nắp bật, ép kim vàng</dd></div>
-        </dl>
-        <p class="price" style="--i:5"><span class="count" data-to="109000">109.000</span>đ <small>/ sản phẩm</small></p>
-      </div>
-    </article>
-  </section>
-
-
-  <section class="set screen" id="set" data-id="set" data-blur="10" data-dim=".34">
-    <div class="set-in">
-      <h2 class="set-title">lull <i class="sm sm-b">Ritual</i>Set</h2>
-      <p class="body">Mind Off, Eyes Off và Slow Off trong một bộ, kèm mã QR nghe playlist 432 Hz và bài tập thở.</p>
-      <p class="deal">
-        <span class="was">327.000đ</span>
-        <span class="now">299.000đ</span>
-      </p>
-      <p class="note">Tiết kiệm 28.000đ so với mua lẻ.</p>
-      <a class="btn" href="#">Nhận lull Ritual Set</a>
-    </div>
-    <footer class="foot">
-    <p class="foot-line">Off the world, on yourself.</p>
-    <p class="foot-sub">lull, chăm sóc giấc ngủ.</p>
-    </footer>
-  </section>
-
 </main>
 
-<nav class="rail" id="rail" aria-label="Các phần của trang">
-  <button data-go="top" aria-label="Mở đầu"></button>
-  <button data-go="about" aria-label="Về chúng tôi"></button>
-  <button data-go="story" aria-label="Câu chuyện"></button>
-  <button data-go="mind" aria-label="Bước 1, Mind Off"></button>
-  <button data-go="eyes" aria-label="Bước 2, Eyes Off"></button>
-  <button data-go="slow" aria-label="Bước 3, Slow Off"></button>
-  <button data-go="set" aria-label="Ritual Set"></button>
-</nav>
+<footer class="foot">
+  <span>lull</span>
+  <span>Off the world, on yourself.</span>
+  <span>Sleep Care</span>
+  <a href="#top">Lên đầu trang</a>
+</footer>
 
-<div class="corner" id="corner">
-  <span>Lăn chuột để đi tiếp</span><i></i>
-  <button class="sound" id="sound" aria-pressed="false" aria-label="Âm thanh nền">
-    <svg viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5Z"/><path class="w" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="x" d="m16 10 4 4m0-4-4 4"/></svg>
-  </button>
-</div>
+<!-- giỏ hàng -->
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" aria-label="Giỏ hàng" aria-hidden="true">
+  <div class="drawer-head"><h2>Giỏ hàng</h2><button type="button" id="cart-close" aria-label="Đóng giỏ hàng">Đóng</button></div>
+  <ul class="lines" id="lines"></ul>
+  <p class="empty" id="empty">Giỏ hàng đang trống. Chọn một sản phẩm để bắt đầu.</p>
+  <div class="drawer-foot" id="drawer-foot" hidden>
+    <p class="total"><span>Tạm tính</span><b id="total">0đ</b></p>
+    <button class="order" type="button" id="order">Đặt hàng</button>
+    <div class="summary" id="summary" hidden>
+      <p>Sao chép nội dung đơn và gửi cho lull để xác nhận.</p>
+      <textarea id="summary-text" readonly rows="7"></textarea>
+      <button type="button" id="copy">Sao chép đơn hàng</button>
+    </div>
+  </div>
+</aside>
 
-<div class="loader" id="loader"><span></span></div>
-
-<script type="module" src="js/main.js?v=28"></script>
+<script src="js/main.js?v=1"></script>
 </body>
 </html>

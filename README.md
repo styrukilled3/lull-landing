@@ -1,9 +1,9 @@
-# lull landing
+# lull
 
-Landing page for lull Ritual. Static site: HTML, CSS and one small ES module. Hero is a looping video (assets/video/hero.mp4, ping-pong loop, poster.jpg). No build step, no dependencies.
+Trang bán hàng đơn giản cho lull Ritual (Sleep Care). HTML, CSS và một file JS, không cần build.
 
-Run locally (ES modules need http, not file://):
+- `index.html`: trang chính (mở đầu, giới thiệu, 4 sản phẩm)
+- `css/style.css`: giao diện, màu `#12351E`, `#CBA052`, `#8B6425`
+- `js/main.js`: giỏ hàng (lưu localStorage), tạo nội dung đơn để sao chép
 
-    python3 -m http.server 8000
-
-Then open http://localhost:8000
+Ảnh sản phẩm hiện là ô trống `.slot`. Thay bằng `<img src="...">` bên trong ô đó.
