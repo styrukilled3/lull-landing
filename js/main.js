@@ -17,12 +17,6 @@ const PRODUCTS = {
     desc: 'Khép lại nghi thức: massage nhẹ nhàng giúp giải tỏa căng cơ mặt và đưa cơ thể vào trạng thái ngủ sâu.',
     facts: ['Đầu lăn thép không gỉ 304 (70%), thân cầm nhựa kháng khuẩn ABS (30%)', 'Hộp giấy cứng nắp bật, khay định hình, logo ép kim vàng'],
   },
-  mask: {
-    name: 'Bịt mắt ngủ lull', price: null, contact: true, no: 'Sleep Mask', title: 'Bịt mắt ngủ', tag: 'The Last Light',
-    img: 'assets/img/mask.jpg', imgs: ['assets/img/mask.jpg', 'assets/img/mask2.jpg'], bg: '#C2BBB9', alt: 'Bịt mắt ngủ lull màu xanh đậm, thêu logo vàng',
-    desc: 'Bước cuối cùng trước khi ngủ: khép lại nghi thức bằng một khoảng tối trọn vẹn.',
-    facts: ['Thêu logo lull màu vàng', 'Hai màu: xanh đậm và trắng ngà'],
-  },
   set: {
     name: 'lull Ritual Set', price: 299000, old: 327000, no: 'Trọn bộ / Ritual Set', title: 'lull Ritual Set', tag: 'Off The World, On Yourself.',
     img: 'assets/img/set.jpg', alt: 'Bộ lull Ritual: túi thơm, kem dưỡng mắt và thanh lăn',
@@ -31,7 +25,7 @@ const PRODUCTS = {
     save: 'Tiết kiệm 28.000đ so với mua lẻ.',
   },
 };
-const ORDER = ['mind', 'eyes', 'slow', 'mask', 'set'];
+const ORDER = ['mind', 'eyes', 'slow', 'set'];
 const KEY = 'lull-cart-v1';
 const fmt = (n) => n.toLocaleString('vi-VN') + 'đ';
 const $ = (id) => document.getElementById(id);
