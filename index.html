@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Noto+Serif:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=7">
+<link rel="stylesheet" href="css/style.css?v=8">
 </head>
 <body>
 
@@ -24,7 +24,11 @@
   <section class="hero">
     <video class="hero-bg" src="assets/video/hero.mp4" poster="assets/video/poster.jpg" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
     <div class="hero-left">
-      <h1 class="sr">lull</h1>
+      <div class="intro">
+        <h1 class="big" aria-label="LULL"><span aria-hidden="true">L</span><span aria-hidden="true">U</span><span aria-hidden="true">L</span><span aria-hidden="true">L</span></h1>
+        <p class="lead" id="lead">Kết thúc một ngày dài không có nghĩa là tâm trí đã thực sự được nghỉ ngơi. lull tạo ra khoảng lặng đó: nơi bạn đặt bộn bề sang một bên, thả lỏng, và để giấc ngủ bắt đầu bằng sự bình yên thực sự.</p>
+      </div>
+      <div class="hero-foot">
       <p class="hero-tag">Off The World, On Yourself.</p>
       <ul class="line" aria-label="Sản phẩm lull">
         <li><a href="#p-mind"><span class="slot tall"><img src="assets/img/mind.jpg" alt="Túi thơm Mind Off màu xanh rêu, thêu logo lull vàng" loading="lazy" decoding="async"></span><b>Mind Off</b><small>59.000đ</small></a></li>
@@ -32,14 +36,13 @@
         <li><a href="#p-slow"><span class="slot tall"><img src="assets/img/slow.jpg" alt="Thanh lăn mát xa mặt Slow Off đầu đá xanh" loading="lazy" decoding="async"></span><b>Slow Off</b><small>109.000đ</small></a></li>
         <li><a href="#p-set"><span class="slot tall"><img src="assets/img/set.jpg" alt="Bộ lull Ritual: túi thơm, kem dưỡng mắt và thanh lăn" loading="lazy" decoding="async"></span><b>Ritual Set</b><small>299.000đ</small></a></li>
       </ul>
+      </div>
     </div>
   </section>
 
   <!-- 2. giới thiệu + sản phẩm -->
   <section class="spread" id="about">
     <div class="about">
-      <h2 class="big">LULL</h2>
-      <p class="lead">Kết thúc một ngày dài không có nghĩa là tâm trí đã thực sự được nghỉ ngơi. lull tạo ra khoảng lặng đó: nơi bạn đặt bộn bề sang một bên, thả lỏng, và để giấc ngủ bắt đầu bằng sự bình yên thực sự.</p>
       <div class="about-art">
         <span class="slot tall"><img src="assets/img/about.jpg" alt="Hộp quà túi thơm Mind Off với thảo mộc khô" loading="lazy" decoding="async"></span>
         <p class="about-note n1">Về lull<br>-<br>Sleep Care</p>
@@ -52,7 +55,7 @@
       <ul class="grid">
         <li class="card" id="p-mind">
           <p class="no">01<br>Mind Off</p>
-          <span class="slot card-img"><img src="assets/img/mind.jpg" alt="Túi thơm Mind Off màu xanh rêu, thêu logo lull vàng" loading="lazy" decoding="async"></span>
+          <span class="slot card-img" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/mind.jpg" alt="Túi thơm Mind Off màu xanh rêu, thêu logo lull vàng" loading="lazy" decoding="async"></span>
           <h3>Túi thơm thảo mộc</h3>
           <p class="meta">Vỏ sen, trần bì, hoa cúc. 50g.</p>
           <p class="price">59.000đ</p>
@@ -60,7 +63,7 @@
         </li>
         <li class="card" id="p-eyes">
           <p class="no">02<br>Eyes Off</p>
-          <span class="slot card-img"><img src="assets/img/eyes.jpg" alt="Hũ kem dưỡng mắt Eyes Off nắp vàng" loading="lazy" decoding="async"></span>
+          <span class="slot card-img" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/eyes.jpg" alt="Hũ kem dưỡng mắt Eyes Off nắp vàng" loading="lazy" decoding="async"></span>
           <h3>Kem dưỡng mắt</h3>
           <p class="meta">Rau má, trà xanh, hoa cúc. 15g.</p>
           <p class="price">159.000đ</p>
@@ -68,7 +71,7 @@
         </li>
         <li class="card" id="p-slow">
           <p class="no">03<br>Slow Off</p>
-          <span class="slot card-img"><img src="assets/img/slow.jpg" alt="Thanh lăn mát xa mặt Slow Off đầu đá xanh" loading="lazy" decoding="async"></span>
+          <span class="slot card-img" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/slow.jpg" alt="Thanh lăn mát xa mặt Slow Off đầu đá xanh" loading="lazy" decoding="async"></span>
           <h3>Thanh lăn mát xa mặt</h3>
           <p class="meta">Đầu lăn thép không gỉ 304.</p>
           <p class="price">109.000đ</p>
@@ -76,7 +79,7 @@
         </li>
         <li class="card card-set" id="p-set">
           <p class="no">Trọn bộ<br>Ritual Set</p>
-          <span class="slot card-img"><img src="assets/img/set.jpg" alt="Bộ lull Ritual: túi thơm, kem dưỡng mắt và thanh lăn" loading="lazy" decoding="async"></span>
+          <span class="slot card-img" role="button" tabindex="0" aria-label="Xem chi tiết"><img src="assets/img/set.jpg" alt="Bộ lull Ritual: túi thơm, kem dưỡng mắt và thanh lăn" loading="lazy" decoding="async"></span>
           <h3>lull Ritual Set</h3>
           <p class="meta">3 sản phẩm, kèm mã QR playlist 432 Hz và bài tập thở.</p>
           <p class="price"><s>327.000đ</s> 299.000đ</p>
@@ -95,6 +98,29 @@
   <a href="#top">Lên đầu trang</a>
 </footer>
 
+<!-- focus sản phẩm -->
+<div class="focus" id="focus" role="dialog" aria-modal="true" aria-labelledby="f-name" aria-hidden="true" hidden>
+  <button class="f-close" id="f-close" type="button">Đóng</button>
+  <button class="f-nav f-prev" id="f-prev" type="button" aria-label="Sản phẩm trước">&larr;</button>
+  <button class="f-nav f-next" id="f-next" type="button" aria-label="Sản phẩm sau">&rarr;</button>
+  <div class="f-wrap">
+    <div class="f-side f-left">
+      <p class="f-no" id="f-no"></p>
+      <h2 id="f-name"></h2>
+      <p class="f-tag" id="f-tag"></p>
+      <p class="f-desc" id="f-desc"></p>
+      <ul class="f-facts" id="f-facts"></ul>
+    </div>
+    <div class="f-stage"><img id="f-img" alt=""></div>
+    <div class="f-side f-right">
+      <p class="f-price" id="f-price"></p>
+      <div class="f-qty"><button type="button" id="f-dec" aria-label="Giảm số lượng">&minus;</button><span id="f-n">1</span><button type="button" id="f-inc" aria-label="Tăng số lượng">+</button></div>
+      <button class="f-add" id="f-add" type="button">Thêm vào giỏ</button>
+      <p class="f-save" id="f-save"></p>
+    </div>
+  </div>
+</div>
+
 <!-- giỏ hàng -->
 <div class="scrim" id="scrim" hidden></div>
 <aside class="drawer" id="drawer" aria-label="Giỏ hàng" aria-hidden="true">
@@ -112,6 +138,6 @@
   </div>
 </aside>
 
-<script src="js/main.js?v=7"></script>
+<script src="js/main.js?v=8"></script>
 </body>
 </html>
