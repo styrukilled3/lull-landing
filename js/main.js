@@ -17,6 +17,12 @@ const PRODUCTS = {
     desc: 'Khép lại nghi thức: massage nhẹ nhàng giúp giải tỏa căng cơ mặt và đưa cơ thể vào trạng thái ngủ sâu.',
     facts: ['Đầu lăn thép không gỉ 304 (70%), thân cầm nhựa kháng khuẩn ABS (30%)', 'Hộp giấy cứng nắp bật, khay định hình, logo ép kim vàng'],
   },
+  mask: {
+    name: 'Bịt mắt ngủ lull', price: null, contact: true, no: 'Sleep Mask', title: 'Bịt mắt ngủ', tag: 'The Last Light',
+    img: 'assets/img/mask.jpg', imgs: ['assets/img/mask.jpg', 'assets/img/mask2.jpg'], bg: '#C2BBB9', alt: 'Bịt mắt ngủ lull màu xanh đậm, thêu logo vàng',
+    desc: 'Bước cuối cùng trước khi ngủ: khép lại nghi thức bằng một khoảng tối trọn vẹn.',
+    facts: ['Thêu logo lull màu vàng', 'Hai màu: xanh đậm và trắng ngà'],
+  },
   set: {
     name: 'lull Ritual Set', price: 299000, old: 327000, no: 'Trọn bộ / Ritual Set', title: 'lull Ritual Set', tag: 'Off The World, On Yourself.',
     img: 'assets/img/set.jpg', alt: 'Bộ lull Ritual: túi thơm, kem dưỡng mắt và thanh lăn',
@@ -25,7 +31,7 @@ const PRODUCTS = {
     save: 'Tiết kiệm 28.000đ so với mua lẻ.',
   },
 };
-const ORDER = ['mind', 'eyes', 'slow', 'set'];
+const ORDER = ['mind', 'eyes', 'slow', 'mask', 'set'];
 const KEY = 'lull-cart-v1';
 const fmt = (n) => n.toLocaleString('vi-VN') + 'đ';
 const $ = (id) => document.getElementById(id);
@@ -162,6 +168,7 @@ const fImg = $('f-img');
 let cur = null;
 let qty = 1;
 let focusFrom = null;
+let imgIdx = 0;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function fill(id) {
@@ -178,12 +185,20 @@ function fill(id) {
   p.facts.forEach((t) => { const li = document.createElement('li'); li.textContent = t; ul.appendChild(li); });
   const price = $('f-price');
   price.textContent = '';
-  if (p.old) { const s = document.createElement('s'); s.textContent = fmt(p.old); price.appendChild(s); }
-  price.appendChild(document.createTextNode(fmt(p.price)));
+  if (p.contact) { price.textContent = 'Liên hệ'; $('f-save').textContent = ''; }
+  else if (p.old) { const s = document.createElement('s'); s.textContent = fmt(p.old); price.appendChild(s); }
+  if (!p.contact) price.appendChild(document.createTextNode(fmt(p.price)));
   $('f-save').textContent = p.save || '';
+  imgIdx = 0;
   fImg.src = p.img;
   fImg.alt = p.alt;
-  fStage.style.background = id === 'set' ? '#B5ACA3' : '';
+  fStage.style.setProperty('--bg', 'url(../' + p.img + ')');
+  fStage.classList.toggle('multi', !!(p.imgs && p.imgs.length > 1));
+  fStage.dataset.count = p.imgs ? '1 / ' + p.imgs.length : '';
+  $('f-qty').hidden = !!p.contact;
+  const add = $('f-add');
+  add.disabled = !!p.contact;
+  add.textContent = p.contact ? 'Liên hệ để đặt' : 'Thêm vào giỏ';
 }
 
 function openFocus(id, fromEl) {
@@ -262,3 +277,44 @@ addEventListener('keydown', (e) => {
   else if (e.key === 'ArrowLeft') step(-1);
   else if (e.key === 'ArrowRight') step(1);
 });
+
+/* bấm vào ảnh trong focus để đổi ảnh phụ */
+fStage.addEventListener('click', () => {
+  const p = PRODUCTS[cur];
+  if (!p || !p.imgs || p.imgs.length < 2) return;
+  imgIdx = (imgIdx + 1) % p.imgs.length;
+  fImg.src = p.imgs[imgIdx];
+  fStage.style.setProperty('--bg', 'url(../' + p.imgs[imgIdx] + ')');
+  fStage.dataset.count = (imgIdx + 1) + ' / ' + p.imgs.length;
+});
+$('f-add').addEventListener('click', (e) => { if (PRODUCTS[cur] && PRODUCTS[cur].contact) e.stopImmediatePropagation(); }, true);
+
+/* nghi thức 3 bước: tiến độ cuộn điều khiển từng bước và mũi tên nối */
+(function () {
+  const sec = $('ritual');
+  if (!sec) return;
+  const steps = [...sec.querySelectorAll('.step')];
+  const arrs = [...sec.querySelectorAll('.arr')];
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches || matchMedia('(max-width: 820px)').matches;
+  if (calm) {
+    const io = new IntersectionObserver((es) => {
+      es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('on'); io.unobserve(en.target); } });
+    }, { threshold: 0.3 });
+    steps.forEach((s) => (matchMedia('(prefers-reduced-motion: reduce)').matches ? s.classList.add('on') : io.observe(s)));
+    return;
+  }
+  const T = [0, 0.25, 0.3, 0.58, 0.63]; // step1, mũi tên 1, step2, mũi tên 2, step3
+  function update() {
+    const r = sec.getBoundingClientRect();
+    const span = r.height - innerHeight + 64;
+    const p = Math.min(1, Math.max(0, (64 - r.top) / span));
+    steps[0].classList.toggle('on', p >= T[0] && r.top < innerHeight * 0.6);
+    arrs[0].classList.toggle('on', p > T[1]);
+    steps[1].classList.toggle('on', p > T[2]);
+    arrs[1].classList.toggle('on', p > T[3]);
+    steps[2].classList.toggle('on', p > T[4]);
+  }
+  addEventListener('scroll', update, { passive: true });
+  addEventListener('resize', update);
+  update();
+})();
