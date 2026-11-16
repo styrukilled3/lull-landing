@@ -58,9 +58,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .hero-tag{font-family:var(--head);font-weight:300;font-size:clamp(15px,1.5vw,20px)}
 .intro{display:flex;flex-direction:column}
 .intro .lead{max-width:34em;margin-top:clamp(12px,2.4vh,22px);font-size:clamp(13px,1.1vw,15px)}
-.big span{display:inline-block;animation:letter 1.2s cubic-bezier(.2,.7,.1,1) both}
-.big span:nth-child(1){animation-delay:.15s}.big span:nth-child(2){animation-delay:.3s}
-.big span:nth-child(3){animation-delay:.45s}.big span:nth-child(4){animation-delay:.6s}
+.logo-hero{display:block;height:clamp(64px,10vw,132px);width:auto;animation:letter 1.4s cubic-bezier(.2,.7,.1,1) .15s both}
+.logo-nav{display:block;height:28px;width:auto}
+.bar-item.brand{display:flex;align-items:center}
 .lead .w{display:inline-block;white-space:pre;animation:word 1s cubic-bezier(.2,.7,.1,1) both;animation-delay:calc(.9s + var(--i) * 45ms)}
 @keyframes letter{from{opacity:0;filter:blur(16px);transform:translateY(28px)}to{opacity:1;filter:blur(0);transform:none}}
 @keyframes word{from{opacity:0;filter:blur(8px);transform:translateY(10px)}to{opacity:1;filter:blur(0);transform:none}}
@@ -95,7 +95,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* 3. sản phẩm */
 .spread{padding:clamp(48px,8vh,88px) var(--pad) clamp(56px,9vh,96px)}
-.big{font-family:var(--head);font-weight:200;font-size:clamp(48px,7.4vw,108px);line-height:.95;letter-spacing:-.035em}
+.big{line-height:0;margin:0}
 .lead{line-height:1.7;font-weight:300}
 .card-img{cursor:zoom-in}
 
